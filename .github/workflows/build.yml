@@ -34,7 +34,6 @@ jobs:
 #          cd docker
 #          docker build -t aws-mock:$VERSION .
 
-
   tag:
     name: Tag
     runs-on: self-hosted
