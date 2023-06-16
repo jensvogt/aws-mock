@@ -71,7 +71,7 @@ jobs:
 
       - name: Show tags
         run: |
-          git tag
+          git sv cv
 
       - name: Create release notes
         run: |
