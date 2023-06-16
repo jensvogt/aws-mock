@@ -2,7 +2,7 @@ FROM debian:latest
 
 # Install basics
 RUN apt-get update && apt-get -y install build-essential cmake git openssl libssl-dev supervisor libarchive-dev
-RUN apt-get -y install libiodbc2 libiodbc2-dev libpq-dev libpqxx-dev zlib1g-dev libcurl4 \
+RUN apt-get -y install libiodbc2 libiodbc2-dev libpq-dev libpqxx-dev zlib1g-dev libcurl4
 RUN mkdir -p /usr/src
 
 # Install google test
