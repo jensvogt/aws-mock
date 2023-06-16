@@ -14,25 +14,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-#      - name: Build project
-#        run: cmake -E make_directory ${{github.workspace}}/build
-#      - name: Configure CMake
-#        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-#      - name: Build
-#        run: cmake --build ./build --config Release
-#      - name: Run tests
-#        run: cd build && ctest -V
-#      - name: Create docs
-#        run: cd build && make docs
-#      - name: Semantic release
-#        run: git sv tag
-#        with:
-#          repo-token: ${{ secrets.GITHUB_TOKEN }}
-#      - name: Build docker image
-#        run: |
-#          VERSION=$(cat VERSION)
-#          cd docker
-#          docker build -t aws-mock:$VERSION .
+
+      - name: Build project
+        run: cmake -E make_directory ${{github.workspace}}/build
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build ./build --config Release
+
+      - name: Run tests
+        run: cd build && ctest -V
+
+      - name: Create docs
+        run: cd build && make docs
 
   tag:
     name: Tag
@@ -69,31 +65,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Show tags
-        run: |
-          git sv cv
-
       - name: Create release notes
         run: |
           VERSION=$(git sv cv)
           git sv rn -t "$VERSION" > release-notes.md
 
-      - name: Build project
-        run: cmake -E make_directory ${{github.workspace}}/build
-      - name: Configure CMake
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
-      - name: Build
-        run: cmake --build ./build --config Release
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          body_path: release-notes.md
-          tag_name: ${{ needs.tag.outputs.tag }}
-          fail_on_unmatched_files: true
-          files: |
-            build/db/libawsmockdb.so
-            build/db/libawsmockdb.so
-            build/core/libawsmocksrv.so
-            build/core/libawsmockwrk.so
-            etc/aws-mock.properties
+      - name: Build Docker
+        run: |
+          VERSION=$(git sv cv)
+          cd docker 
+          docker build -t aws-mock:$VERSION .
