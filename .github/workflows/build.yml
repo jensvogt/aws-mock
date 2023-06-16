@@ -69,6 +69,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Show tags
+        run: |
+          git tag
+
       - name: Create release notes
         run: |
           git sv rn -t "${{ needs.tag.outputs.tag }}" > release-notes.md
