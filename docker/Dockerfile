@@ -2,7 +2,8 @@ FROM debian:latest
 
 # Install basics
 RUN apt-get update && apt-get -y install build-essential cmake git openssl libssl-dev supervisor libarchive-dev
-RUN apt-get -y install libiodbc2 libiodbc2-dev libpq-dev libpqxx-dev zlib1g-dev libcurl4 && mkdir -p /usr/src
+RUN apt-get -y install libiodbc2 libiodbc2-dev libpq-dev libpqxx-dev zlib1g-dev libcurl4 \
+RUN mkdir -p /usr/src
 
 # Install google test
 RUN mkdir -p /usr/src && \
@@ -13,7 +14,7 @@ RUN mkdir -p /usr/src && \
     make && \
     make install
 
-# Install Poco libraries \
+# Install Poco libraries
 RUN cd /usr/src && \
     git clone -b master https://github.com/pocoproject/poco.git && \
     cd /usr/src/poco && \
@@ -21,7 +22,23 @@ RUN cd /usr/src && \
     make && \
     make install
 
-# Install aws-mock \
+# Install mongo-c-driver
+RUN cd /usr/src && \
+    git clone -b master https://github.com/mongodb/mongo-c-driver.git && \
+    cd /usr/src/mongo-c-driver && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
+    make && \
+    make install
+
+# Install mongo-c-driver
+RUN cd /usr/src && \
+    git clone -b master https://github.com/mongodb/mongo-cxx-driver.git && \
+    cd /usr/src/mongo-cxx-driver && \
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
+    make && \
+    make install
+
+# Install aws-mock
 RUN cd /usr/src && \
     git clone https://github.com/jensvogt/aws-mock.git && \
     cd /usr/src/aws-mock && \
