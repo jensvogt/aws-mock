@@ -75,7 +75,8 @@ jobs:
 
       - name: Create release notes
         run: |
-          git sv rn -t "${{ needs.tag.outputs.tag }}" > release-notes.md
+          VERSION=$(git sv cv)
+          git sv rn -t "$VERSION" > release-notes.md
 
       - name: Build project
         run: cmake -E make_directory ${{github.workspace}}/build
