@@ -1,7 +1,8 @@
 FROM debian:latest
 
 # Install basics
-RUN apt-get update && apt-get -y install build-essential cmake git openssl libssl-dev supervisor libarchive-dev zlib1g-dev
+RUN apt-get update && apt-get -y install build-essential cmake git openssl libssl-dev supervisor libarchive-dev \
+    zlib1g-dev wget
 RUN mkdir -p /usr/src
 
 # Install google test
@@ -37,6 +38,12 @@ RUN cd /usr/src && \
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
     make && \
     make install
+
+# Install sv4git
+RUN cd /usr/src && \
+    wget https://github.com/bvieira/sv4git/releases/download/v2.9.0/git-sv_2.9.0_linux_amd64.tar.gz && \
+    tar -xzf git-sv_2.9.0_linux_amd64.tar.gz && \
+    cp git-sv /usr/bin && chmod 755 /usr/bin/git-sv
 
 # Install aws-mock
 RUN cd /usr/src && \
