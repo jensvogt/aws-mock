@@ -20,8 +20,10 @@ public:
       ofs << "awsmock.rest.host=localhost" << std::endl;
       ofs << "awsmock.rest.port=4567" << std::endl;
       ofs << "awsmock.mongodb.name=test" << std::endl;
-      ofs << "awsmock.mongodb.host=localhost" << std::endl;
+      ofs << "awsmock.mongodb.host=192.168.178.34" << std::endl;
       ofs << "awsmock.mongodb.port=27017" << std::endl;
+      ofs << "awsmock.mongodb.user=admin" << std::endl;
+      ofs << "awsmock.mongodb.password=admin" << std::endl;
       ofs << "awsmock.threadpool.name=srv-worker" << std::endl;
       ofs << "awsmock.threadpool.min=8" << std::endl;
       ofs << "awsmock.threadpool.max=32" << std::endl;
