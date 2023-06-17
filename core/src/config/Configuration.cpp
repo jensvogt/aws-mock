@@ -84,6 +84,10 @@ namespace AwsMock::Core {
         poco_trace(_logger, "Value set, key: " + key);
     }
 
+    std::string Configuration::GetAppName() {
+        return PROJECT_NAME;
+    }
+
     std::string Configuration::GetVersion() {
         return PROJECT_VER;
     }

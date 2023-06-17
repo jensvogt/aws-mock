@@ -115,6 +115,13 @@ namespace AwsMock::Core {
       void SetValue(const std::string &key, const std::string &value);
 
       /**
+       * Returns the application name
+       *
+       * @return application name
+       */
+      static std::string GetAppName();
+
+      /**
        * Returns the version of the library.
        *
        * @return library version

@@ -60,7 +60,8 @@ namespace AwsMock {
           InitializeMonitoring();
           InitializeErrorHandler();
           poco_information(_logger,
-                           "Starting aws-mock v" + Configuration::GetVersion() + " pid: " + std::to_string(getpid()) + " loglevel: " + _configuration.GetLogLevel());
+                           "Starting " + Configuration::GetAppName() + " v" + Configuration::GetVersion() + " pid: " + std::to_string(getpid()) + " loglevel: "
+                               + _configuration.GetLogLevel());
           Poco::Util::ServerApplication::initialize(self);
       }
 
