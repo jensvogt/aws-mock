@@ -2,8 +2,8 @@
 // Created by vogje01 on 04/01/2023.
 //
 
-#ifndef AWSMOCK_SERVICE_S3HANDLER_H
-#define AWSMOCK_SERVICE_S3HANDLER_H
+#ifndef AWSMOCK_SERVICE_SQSHANDLER_H
+#define AWSMOCK_SERVICE_SQSHANDLER_H
 
 // Poco includes
 #include "Poco/Logger.h"
@@ -18,31 +18,16 @@
 #include "awsmock/core/MetricServiceTimer.h"
 #include "awsmock/core/MetricDefinition.h"
 #include "awsmock/service/AbstractHandler.h"
-#include "awsmock/service/S3Service.h"
+#include "awsmock/service/SQSService.h"
 
 namespace AwsMock::Service {
 
+    typedef std::map<std::string, std::string> AttributeList;
+
     /**
      * AWS S3 mock handler
-     *
-     * <p>AWS S3 HTTP request handler. All S3 related REST call are ending here. Depending on the request header the S3 service will be selected in case the
-     * authorization header contains the S3 service.<p>
-     *
-     * <p><h3>GET Requests</h3>
-     * <ul>
-     * <li>S3 bucket list command: <pre>aws s3 ls --endpoint http://localhost:4567</pre></li>
-     * <li>S3 object list command: <pre>aws s3 ls s3://example-bucket --recursive --endpoint http://localhost:4567</pre></li>
-     * </ul>
-     * </p>
-     * <p><h3>POST Requests</h3>
-     * <ul>
-     * <li>Bigfile (>4MB) Initial Multipart upload: <pre>aws cp example.txt s3://example-bucket/test/example.txt --endpoint http://localhost:4567</pre></li>
-     * <li>Upload part</li>
-     * <li>Complete Multipart upload</li>
-     * </ul>
-     * <p>
      */
-    class S3Handler : public AbstractHandler {
+    class SQSHandler : public AbstractHandler {
 
     public:
 
@@ -52,7 +37,7 @@ namespace AwsMock::Service {
        * @param configuration application configuration
        * @param metricService monitoring service
        */
-      S3Handler(Core::Configuration &configuration, Core::MetricService &metricService);
+      SQSHandler(Core::Configuration &configuration,Core::MetricService &metricService);
 
     protected:
 
@@ -61,7 +46,7 @@ namespace AwsMock::Service {
        *
        * @param request HTTP request
        * @param response HTTP response
-       * @param region AWS region name
+       * @param region AWS region
        * @param user AWS user
        * @see AbstractResource::handleGet(Poco::Net::HTTPServerRequest &, Poco::Net::HTTPServerResponse &)
        */
@@ -72,7 +57,7 @@ namespace AwsMock::Service {
        *
        * @param request HTTP request
        * @param response HTTP response
-       * @param region AWS region name
+       * @param region AWS region
        * @param user AWS user
        * @see AbstractResource::handlePut(Poco::Net::HTTPServerRequest &, Poco::Net::HTTPServerResponse &)
        */
@@ -83,7 +68,7 @@ namespace AwsMock::Service {
        *
        * @param request HTTP request
        * @param response HTTP response
-       * @param region AWS region name
+       * @param region AWS region
        * @param user AWS user
        * @see AbstractResource::handlePost(Poco::Net::HTTPServerRequest &, Poco::Net::HTTPServerResponse &)
        */
@@ -94,7 +79,7 @@ namespace AwsMock::Service {
        *
        * @param request HTTP request
        * @param response HTTP response
-       * @param region AWS region name
+       * @param region AWS region
        * @param user AWS user
        * @see AbstractResource::handleDelete(Poco::Net::HTTPServerRequest &, Poco::Net::HTTPServerResponse &)
        */
@@ -103,6 +88,7 @@ namespace AwsMock::Service {
       /**
        * Options request.
        *
+       * @param request HTTP request
        * @param response HTTP response
        * @see AbstractResource::handleOption(Poco::Net::HTTPServerRequest &, Poco::Net::HTTPServerResponse &)
        */
@@ -113,20 +99,58 @@ namespace AwsMock::Service {
        *
        * @param request HTTP request
        * @param response HTTP response
-       * @see AbstractResource::handleHead(Poco::Net::HTTPServerRequest &, Poco::Net::HTTPServerResponse &)
+       * @see AbstractResource::handleOption(Poco::Net::HTTPServerRequest &, Poco::Net::HTTPServerResponse &)
        */
       void handleHead(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) override;
 
     private:
 
       /**
-       * Returns the bucket and key from the URI
+       * Get the action from the request body
        *
-       * @param uri request URI
-       * @param bucket S3 bucket name
-       * @param key S3 object key
+       * @param body HTTP request body (in)
+       * @param action SQS action (out)
+       * @param version SQS version (out)
        */
-      void GetBucketKeyFromUri(const std::string &uri, std::string &bucket, std::string &key);
+      void GetActionVersion(const std::string &body, std::string &action, std::string &version);
+
+      /**
+       * Get the action from the request body
+       *
+       * @param body HTTP request body
+       * @param name parameter name
+       * @return parameter value
+       */
+      std::string GetStringParameter(const std::string &body, const std::string &name);
+
+      /**
+       * Return an integer name.
+       *
+       * @param body HTTP message body
+       * @param name name name
+       * @param min minimum value
+       * @param max maximum value
+       * @param def default value
+       * @return integer name
+       */
+      int GetIntParameter(const std::string &body, const std::string &name, int min, int max, int def);
+
+      /**
+       * Returns the attribute count.
+       *
+       * @param body HTTP message body
+       * @param parameter parameter name
+       * @return number of sqs
+       */
+      int GetAttributeCount(const std::string &body, const std::string &parameter);
+
+      /**
+       * Get the endpoint from the request header
+       *
+       * @param request HTTP request
+       * @return endpoint
+       */
+      static std::string GetEndpoint(Poco::Net::HTTPServerRequest &request);
 
       /**
        * Logger
@@ -134,7 +158,7 @@ namespace AwsMock::Service {
       Poco::LogStream _logger;
 
       /**
-       * S3 handler configuration
+       * ImageHandler import configuration
        */
       Core::Configuration &_configuration;
 
@@ -144,11 +168,15 @@ namespace AwsMock::Service {
       Core::MetricService &_metricService;
 
       /**
-       * S3 service
+       * SQS service
        */
-      Service::S3Service _s3Service;
+      Service::SQSService _sqsService;
 
+      /**
+       * Default account ID
+       */
+      std::string _accountId;
     };
-} // namespace AwsMock
+} // namespace AwsMock::Service
 
-#endif // AWSMOCK_SERVICE_S3HANDLER_H
+#endif // AWSMOCK_SERVICE_SQSHANDLER_H
