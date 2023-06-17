@@ -15,7 +15,6 @@
 #include "Poco/LogStream.h"
 #include "Poco/Data/Session.h"
 #include "Poco/Data/RecordSet.h"
-#include "Poco/Data/SQLite/Connector.h"
 
 // AwsMock includes
 #include <awsmock/core/Logger.h>

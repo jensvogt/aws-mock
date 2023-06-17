@@ -5,9 +5,10 @@ aws-mock is a high performance, persistent AWS simulation. Currently the followi
 - S3: Amazon Simple Storage Service
 - SQS: Amazon Simple Queue Service
 - SNS: Amazon Simple Notification Service
+- Lambda: Amazon Lambda Service
 
-aws-mock is written in C++ with a SQLite persistence layer. All objects are stored in the database. The simulation 
-reacts to all AWS commands send to the default port 4567. FOr a lists of supported command see below tables for the 
+aws-mock is written in C++ with a MongoDB persistence layer. All objects are stored in the database. The simulation 
+reacts to all AWS commands send to the default port 4567. For a lists of supported command see below tables for the 
 different AWS services.
 
 ## S3

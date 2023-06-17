@@ -219,8 +219,6 @@ namespace AwsMock::Database {
       /**
        * Creates a bucket notification-
        *
-       * <p>Replaces the wildcard characters '*' with the SQLite wildcard '%'.</p>
-       *
        * @param bucket S3 bucket
        * @param bucketNotification bucket notification
        * @return updated Bucket entity

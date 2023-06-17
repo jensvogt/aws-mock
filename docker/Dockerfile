@@ -18,7 +18,7 @@ RUN cd /usr/src && \
     git clone -b master https://github.com/pocoproject/poco.git && \
     cd /usr/src/poco && \
     cmake -DENABLE_PAGECOMPILER=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_REDIS=OFF -DENABLE_DATA_POSTGRESQL=OFF -DENABLE_DATA_MYSQL=OFF \
-    -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
+    -DENABLE_NETSSL=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
     make && \
     make install
 
