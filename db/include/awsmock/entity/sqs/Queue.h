@@ -392,8 +392,8 @@ namespace AwsMock::Database::Entity::SQS {
           queueUrl = mResult.value()["queueUrl"].get_string().value.to_string();
           queueArn = mResult.value()["queueArn"].get_string().value.to_string();
           attributes.FromDocument(mResult.value()["attributes"].get_document().value);
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
       }
 
       /**
@@ -410,8 +410,8 @@ namespace AwsMock::Database::Entity::SQS {
           queueUrl = mResult.value()["queueUrl"].get_string().value.to_string();
           queueArn = mResult.value()["queueArn"].get_string().value.to_string();
           attributes.FromDocument(mResult.value()["attributes"].get_document().value);
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value)/1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value)/1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value)/1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value)/1000));
       }
 
       /**

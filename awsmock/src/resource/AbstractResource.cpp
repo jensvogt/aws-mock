@@ -238,7 +238,7 @@ namespace AwsMock::Resource {
     void AbstractResource::GetRegionUser(const std::string &authorization, std::string &region, std::string &user) {
         Poco::RegularExpression::MatchVec posVec;
 
-        Poco::RegularExpression pattern(R"(Credential=([a-zA-Z]+)\/[0-9]{8}\/([a-zA-Z0-9\-]+)\/[a-zA-Z0-9]+\/aws4_request,.*$)");
+        Poco::RegularExpression pattern(R"(Credential=([a-zA-Z0-9]+)\/[0-9]{8}\/([a-zA-Z0-9\-]+)\/[a-zA-Z0-9]+\/aws4_request,.*$)");
         if (!pattern.match(authorization, 0, posVec)) {
             throw Core::ResourceNotFoundException("Could not extract region and user");
         }

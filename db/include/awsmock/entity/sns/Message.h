@@ -174,9 +174,9 @@ namespace AwsMock::Database::Entity::SNS {
           targetArn = mResult.value()["targetArn"].get_string().value.to_string();
           message = mResult.value()["message"].get_string().value.to_string();
           messageId = mResult.value()["messageId"].get_string().value.to_string();
-          lastSend = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["reset"].get_date().value) / 1000000));
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000000));
+          lastSend = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["reset"].get_date().value) / 1000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
 
           bsoncxx::array::view attributesView{mResult.value()["attributes"].get_array().value};
           for (bsoncxx::array::element attributeElement : attributesView) {
@@ -201,9 +201,9 @@ namespace AwsMock::Database::Entity::SNS {
           targetArn = mResult.value()["targetArn"].get_string().value.to_string();
           message = mResult.value()["message"].get_string().value.to_string();
           messageId = mResult.value()["messageId"].get_string().value.to_string();
-          lastSend = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["reset"].get_date().value) / 1000000));
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000000));
+          lastSend = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["reset"].get_date().value) / 1000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
 
           bsoncxx::array::view attributesView{mResult.value()["attributes"].get_array().value};
           for (bsoncxx::array::element attributeElement : attributesView) {

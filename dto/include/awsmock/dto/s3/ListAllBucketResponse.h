@@ -44,7 +44,7 @@ namespace AwsMock::Dto::S3 {
        *
        * @return XML string
        */
-      std::string ToXml() const {
+      [[nodiscard]] std::string ToXml() const {
 
           Poco::XML::AutoPtr<Poco::XML::Document> pDoc = new Poco::XML::Document;
           Poco::XML::AutoPtr<Poco::XML::Element> pRoot = pDoc->createElement("ListAllMyBucketsResult");
@@ -66,14 +66,12 @@ namespace AwsMock::Dto::S3 {
 
               pName = pDoc->createElement("Name");
               pBucket->appendChild(pName);
-
-              pCreated = pDoc->createElement("CreationDate");
-              pBucket->appendChild(pCreated);
-
               pNameText = pDoc->createTextNode(it.name);
               pName->appendChild(pNameText);
 
-              pCreatedText = pDoc->createTextNode(Poco::DateTimeFormatter::format(it.created, Poco::DateTimeFormat::HTTP_FORMAT));
+              pCreated = pDoc->createElement("CreationDate");
+              pBucket->appendChild(pCreated);
+              pCreatedText = pDoc->createTextNode(Poco::DateTimeFormatter::format(it.created, Poco::DateTimeFormat::ISO8601_FORMAT));
               pCreated->appendChild(pCreatedText);
           }
 

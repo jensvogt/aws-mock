@@ -100,8 +100,8 @@ namespace AwsMock::Database::Entity::S3 {
           md5sum = mResult.value()["md5sum"].get_string().value.to_string();
           contentType = mResult.value()["contentType"].get_string().value.to_string();
           owner = mResult.value()["owner"].get_string().value.to_string();
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
       }
 
       /**
@@ -120,8 +120,8 @@ namespace AwsMock::Database::Entity::S3 {
           md5sum = mResult.value()["md5sum"].get_string().value.to_string();
           contentType = mResult.value()["contentType"].get_string().value.to_string();
           owner = mResult.value()["owner"].get_string().value.to_string();
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
       }
 
       /**

@@ -181,8 +181,8 @@ namespace AwsMock::Database::Entity::S3 {
           region = mResult.value()["region"].get_string().value.to_string();
           name = mResult.value()["name"].get_string().value.to_string();
           owner = mResult.value()["owner"].get_string().value.to_string();
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value)/1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value)/1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
 
           bsoncxx::array::view notificationView{mResult.value()["notifications"].get_array().value};
           for (bsoncxx::array::element notificationElement : notificationView) {
@@ -207,8 +207,8 @@ namespace AwsMock::Database::Entity::S3 {
           region = mResult.value()["region"].get_string().value.to_string();
           name = mResult.value()["name"].get_string().value.to_string();
           owner = mResult.value()["owner"].get_string().value.to_string();
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value)/1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value)/1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
 
           bsoncxx::array::view notificationView{mResult.value()["notifications"].get_array().value};
           for (bsoncxx::array::element notificationElement : notificationView) {

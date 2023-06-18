@@ -146,7 +146,7 @@ namespace AwsMock::Database::Entity::SNS {
        * @param subscription name of the event
        * @return true if notification with the given event name exists.
        */
-      bool HasSubscription(const Subscription subscription) {
+      bool HasSubscription(const Subscription& subscription) {
           return find_if(subscriptions.begin(), subscriptions.end(), [subscription](const Subscription &s) {
             return s.protocol == subscription.protocol && s.endpoint == subscription.endpoint;
           }) != subscriptions.end();
@@ -190,8 +190,8 @@ namespace AwsMock::Database::Entity::SNS {
           owner = mResult.value()["owner"].get_string().value.to_string();
           topicUrl = mResult.value()["topicUrl"].get_string().value.to_string();
           topicArn = mResult.value()["topicArn"].get_string().value.to_string();
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
 
           bsoncxx::array::view subscriptionsView{mResult.value()["subscriptions"].get_array().value};
           for (bsoncxx::array::element subscriptionElement : subscriptionsView) {
@@ -216,8 +216,8 @@ namespace AwsMock::Database::Entity::SNS {
           owner = mResult.value()["owner"].get_string().value.to_string();
           topicUrl = mResult.value()["topicUrl"].get_string().value.to_string();
           topicArn = mResult.value()["topicArn"].get_string().value.to_string();
-          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000000));
-          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000000));
+          created = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["created"].get_date().value) / 1000));
+          modified = Poco::DateTime(Poco::Timestamp::fromEpochTime(bsoncxx::types::b_date(mResult.value()["modified"].get_date().value) / 1000));
 
           bsoncxx::array::view subscriptionsView{mResult.value()["subscriptions"].get_array().value};
           for (bsoncxx::array::element subscriptionElement : subscriptionsView) {
