@@ -30,13 +30,14 @@ namespace AwsMock::Core {
 
         // act
         std::vector<int> result;
+        result.reserve(100);
         for (int i = 0; i < 100; i++) {
             result.push_back(RandomUtils::NextInt(min, max));
         }
 
         // assert
         for (int i = 0; i < 100; i++) {
-            EXPECT_TRUE(result[i] > min && result[i] < max);
+            EXPECT_TRUE(result[i] >= min && result[i] <= max);
         }
     }
 

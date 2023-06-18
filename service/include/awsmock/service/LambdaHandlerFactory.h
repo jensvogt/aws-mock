@@ -31,7 +31,7 @@ namespace AwsMock::Service {
        */
       LambdaRequestHandlerFactory(Core::Configuration &configuration, Core::MetricService &metricService) : _configuration(configuration), _metricService(metricService) {}
 
-      virtual Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &) {
+      Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &) override {
           return new LambdaHandler(_configuration, _metricService);
       }
 

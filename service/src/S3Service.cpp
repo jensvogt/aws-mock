@@ -15,7 +15,10 @@ namespace AwsMock::Service {
         _dataDir = _configuration.getString("awsmock.data.dir", "/tmp/awsmock/data");
         _tempDir = _dataDir + Poco::Path::separator() + "tmp";
         _database = std::make_unique<Database::S3Database>(_configuration);
-        _lambdaService = std::make_unique<Service::LambdaService>(_configuration);
+
+        // Lambda service connection
+        _lambdaServiceHost = _configuration.getString("awsmock.service.lambda.host", "localhost");
+        _lambdaServicePort = _configuration.getInt("awsmock.service.lambda.port", 9503);
 
         // Create temp directory
         if (!Core::DirUtils::DirectoryExists(_tempDir)) {
@@ -247,7 +250,7 @@ namespace AwsMock::Service {
             Database::Entity::S3::Bucket bucket = _database->GetBucketByRegionName(request.region, request.bucket);
             auto notification =
                 find_if(bucket.notifications.begin(), bucket.notifications.end(), [](const Database::Entity::S3::BucketNotification eventNotification) {
-                  return eventNotification.event == "s3::Created:Put";
+                  return eventNotification.event == "s3:ObjectCreated:Put";
                 });
             if (notification != bucket.notifications.end()) {
                 CheckNotifications(object, request.region, "s3:ObjectCreated:Put");
@@ -415,7 +418,7 @@ namespace AwsMock::Service {
                 eventNotification.records.push_back(record);
                 _logger.debug() << "Found record, count: " << eventNotification.records.size() << std::endl;
 
-                _lambdaService->InvokeEventFunction(eventNotification);
+                SendLambdaInvocationRequest(eventNotification);
                 _logger.debug() << "Lambda function invoked, eventNotification: " + eventNotification.ToString() << std::endl;
             }
         }
@@ -463,13 +466,42 @@ namespace AwsMock::Service {
     void S3Service::DeleteBucket(const std::string &bucket) {
 
         std::string dirname = _dataDir + Poco::Path::separator() + "s3" + Poco::Path::separator() + bucket;
-        if(Core::DirUtils::DirectoryExists(dirname)) {
+        if (Core::DirUtils::DirectoryExists(dirname)) {
             Core::DirUtils::DeleteDirectory(dirname, true);
         }
     }
 
     std::string S3Service::GetMultipartUploadDirectory(const std::string &uploadId) {
         return _tempDir + Poco::Path::separator() + uploadId;
+    }
+
+    void S3Service::SendLambdaInvocationRequest(const Dto::S3::EventNotification &eventNotification) {
+
+        //"Credential=none/20230618/eu-central-1/s3/aws4_request, SignedHeaders=content-md5;content-type;host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=fe9766ea2c032ac7b17033a567f6b361192bddcf73f89d25c15019977c544e1c"
+        Poco::URI uri("http://" + _lambdaServiceHost + ":" + std::to_string(_lambdaServicePort) + "/2015-03-31/functions/function/invocations");
+        std::string path(uri.getPathAndQuery());
+
+        // Set payload
+        std::string body = eventNotification.ToJson();
+
+        // Create HTTP request and set headers
+        Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
+        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_POST, path, Poco::Net::HTTPMessage::HTTP_1_1);
+        request.setContentLength((long) body.length());
+        request.add("Content-Type", "application/json");
+        request.add("Authorization", "AWS4-HMAC-SHA256 Credential=none/20230618/eu-central-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-security-token, Signature=90d0e45560fa4ce03e6454b7a7f2a949e0c98b46c35bccb47f666272ec572840");
+        _logger.debug() << "Invocation request created, body: " + body << std::endl;
+
+        // Send request
+        std::ostream &os = session.sendRequest(request);
+        os << body;
+
+        // Get the response status
+        Poco::Net::HTTPResponse response;
+        if (response.getStatus() != Poco::Net::HTTPResponse::HTTP_OK) {
+            _logger.error() << "HTTP error, status: " + std::to_string(response.getStatus()) + " reason: " + response.getReason() << std::endl;
+        }
+        _logger.debug() << "Invocation request send, status: " << response.getStatus() << std::endl;
     }
 
 } // namespace AwsMock::Service

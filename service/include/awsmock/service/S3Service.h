@@ -172,6 +172,13 @@ namespace AwsMock::Service {
     private:
 
       /**
+       * Send lambda function invocation request to Lambda service.
+       *
+       * @param eventNotification event notification
+       */
+      void SendLambdaInvocationRequest(const Dto::S3::EventNotification &eventNotification);
+
+      /**
        * Get the directory from the object key.
        *
        * @param key S3 object key
@@ -275,14 +282,19 @@ namespace AwsMock::Service {
       std::unique_ptr<Database::S3Database> _database;
 
       /**
-       * Lambda service, needed for the cloud function S3 notifications
-       */
-      std::unique_ptr<LambdaService> _lambdaService;
-
-      /**
        * Multipart uploads map
        */
       MultiPartUploads _uploads;
+
+      /**
+       * Lambda service port
+       */
+      int _lambdaServicePort;
+
+      /**
+       * Lambda service host
+       */
+      std::string _lambdaServiceHost;
 
     };
 
