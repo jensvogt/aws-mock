@@ -74,7 +74,7 @@ jobs:
         run: |
           VERSION=$(git sv cv)
           cd docker 
-          docker build -t --no-cache aws-mock:$VERSION .
+          docker build --no-cache -t aws-mock:$VERSION .
 
   push_to_registry:
     name: Push Docker image to Docker Hub
