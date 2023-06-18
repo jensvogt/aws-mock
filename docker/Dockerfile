@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:bookworm-slim
 
 # Install basics
 RUN apt-get update && apt-get -y install build-essential cmake git openssl libssl-dev supervisor libarchive-dev \
