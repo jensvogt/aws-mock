@@ -78,6 +78,16 @@ namespace AwsMock::Service {
        */
       Poco::Net::HTTPServer *_httpServer;
 
+      /**
+       * HTTP max message queue length
+       */
+      int _maxQueueLength;
+
+      /**
+       * HTTP max concurrent connections
+       */
+      int _maxThreads;
+
     };
 
 } // namespace AwsMock::Service

@@ -14,19 +14,26 @@ namespace AwsMock::Service {
 
         _port = _configuration.getInt("awsmock.service.s3.port", S3_DEFAULT_PORT);
         _host = _configuration.getString("awsmock.service.s3.host", S3_DEFAULT_HOST);
+        _maxQueueLength = _configuration.getInt("awsmock.service.s3.max.queue", 250);
+        _maxThreads = _configuration.getInt("awsmock.service.s3.max.threads", 50);
         _logger.debug() << "S3 rest service initialized, endpoint: " << _host << ":" << _port << std::endl;
     }
 
     S3Server::~S3Server() {
-        _httpServer->stopAll(true);
-        delete _httpServer;
+        if(_httpServer) {
+            _httpServer->stopAll(true);
+            delete _httpServer;
+            _logger.information() << "S3 rest service stopped" << std::endl;
+        }
     }
 
     void S3Server::start() {
-        auto *httpServerParams = new Poco::Net::HTTPServerParams();
 
-        httpServerParams->setMaxQueued(250);
-        httpServerParams->setMaxThreads(50);
+        // Set HTTP server parameter
+        auto *httpServerParams = new Poco::Net::HTTPServerParams();
+        httpServerParams->setMaxQueued(_maxQueueLength);
+        httpServerParams->setMaxThreads(_maxThreads);
+        _logger.debug() << "HTTP server parameter set, maxQueue: " << _maxQueueLength << " maxThreads: " << _maxThreads << std::endl;
 
         _httpServer =
             new Poco::Net::HTTPServer(new S3RequestHandlerFactory(_configuration, _metricService), Poco::Net::ServerSocket(Poco::UInt16(_port)), httpServerParams);

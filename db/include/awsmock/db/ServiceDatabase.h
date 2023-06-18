@@ -10,7 +10,12 @@
 
 // Poco includes
 #include "Poco/Logger.h"
-#include "Poco/Data/Session.h"
+#include "Poco/LogStream.h"
+
+// MongoDB includes
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/json.hpp>
+#include <mongocxx/stdx.hpp>
 
 // AwsMock includes
 #include <awsmock/core/Logger.h>
@@ -43,7 +48,12 @@ namespace AwsMock::Database {
       /**
        * Logger
        */
-      Poco::Logger &_logger;
+      Poco::LogStream _logger;
+
+      /**
+       * Service collection
+       */
+      mongocxx::collection _serviceCollection{};
 
     };
 

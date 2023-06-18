@@ -2,8 +2,8 @@
 // Created by vogje01 on 17/06/2023.
 //
 
-#ifndef AWSMOCK_SERVICE_S3HANDLERFACTORY_H
-#define AWSMOCK_SERVICE_S3HANDLERFACTORY_H
+#ifndef AWSMOCK_SERVICE_SNSHANDLERFACTORY_H
+#define AWSMOCK_SERVICE_SNSHANDLERFACTORY_H
 
 // Poco includes
 #include "Poco/Logger.h"
@@ -12,14 +12,14 @@
 // AwsMock includes
 #include <awsmock/core/Configuration.h>
 #include <awsmock/core/MetricService.h>
-#include <awsmock/service/S3Handler.h>
+#include <awsmock/service/SNSHandler.h>
 
 namespace AwsMock::Service {
 
     /**
      * S3 request handler factory
      */
-    class S3RequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory {
+    class SNSRequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory {
 
     public:
 
@@ -29,10 +29,10 @@ namespace AwsMock::Service {
        * @param configuration application configuration
        * @param metricService  monitoring
        */
-      S3RequestHandlerFactory(Core::Configuration &configuration, Core::MetricService &metricService) : _configuration(configuration), _metricService(metricService) {}
+      SNSRequestHandlerFactory(Core::Configuration &configuration, Core::MetricService &metricService) : _configuration(configuration), _metricService(metricService) {}
 
-      virtual Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &) {
-          return new S3Handler(_configuration, _metricService);
+      virtual Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &) override {
+          return new SNSHandler(_configuration, _metricService);
       }
 
     private:
@@ -51,4 +51,4 @@ namespace AwsMock::Service {
 
 } // namespace AwsMock::Service
 
-#endif //AWSMOCK_SERVICE_S3HANDLERFACTORY_H
+#endif //AWSMOCK_SERVICE_SNSHANDLERFACTORY_H

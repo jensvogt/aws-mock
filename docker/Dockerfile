@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:bookworm-slim AS build
 
 # Install basics
 RUN apt-get update && apt-get -y install build-essential cmake git openssl libssl-dev supervisor libarchive-dev \
@@ -19,7 +19,7 @@ RUN cd /usr/src && \
     git clone -b master https://github.com/pocoproject/poco.git && \
     cd /usr/src/poco && \
     cmake -DENABLE_PAGECOMPILER=OFF -DENABLE_DATA_SQLITE=OFF -DENABLE_REDIS=OFF -DENABLE_DATA_POSTGRESQL=OFF -DENABLE_DATA_MYSQL=OFF \
-    -DENABLE_NETSSL=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
+    -DENABLE_NETSSL=ON -DENABLE_MONGODB=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr . && \
     make && \
     make install
 
@@ -53,6 +53,25 @@ RUN cd /usr/src && \
     cmake --build . --config Release && \
     cmake --install . --prefix /usr
 
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get -y install openssl supervisor libarchive13 zlib1g
+
+COPY --from=build /usr/src/aws-mock/etc/aws-mock.properties /etc
+COPY --from=build /usr/bin/aws-mock /usr/bin
+COPY --from=build /usr/lib/libPocoFoundation* /usr/lib
+COPY --from=build /usr/lib/libPocoUtil* /usr/lib
+COPY --from=build /usr/lib/libPocoNet* /usr/lib
+COPY --from=build /usr/lib/libPocoXML* /usr/lib
+COPY --from=build /usr/lib/libPocoJSON* /usr/lib
+COPY --from=build /usr/lib/libPocoZip* /usr/lib
+COPY --from=build /usr/lib/libPocoCrypto* /usr/lib
+COPY --from=build /usr/lib/libPocoPrometheus* /usr/lib
+COPY --from=build /usr/lib/x86_64-linux-gnu/libmongoc-1.0* /usr/lib
+COPY --from=build /usr/lib/x86_64-linux-gnu/libmongocxx* /usr/lib
+COPY --from=build /usr/lib/x86_64-linux-gnu/libbson* /usr/lib
+COPY --from=build /usr/lib/libawsmock* /usr/lib
+
 # Supervisord
 RUN apt-get update && \
     apt-get install -y supervisor
@@ -60,14 +79,12 @@ RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Make dirctories
-RUN mkdir -p /tmp/awsmock/data/db && \
-    mkdir -p /tmp/awsmock/data/s3 && \
+RUN mkdir -p /tmp/awsmock/data/s3 && \
     mkdir -p /tmp/awsmock/data/sqs && \
     mkdir -p /tmp/awsmock/data/lambda && \
     mkdir -p /tmp/awsmock/data/tmp
 
 # Add properties
-RUN cp /usr/src/aws-mock/etc/aws-mock.properties /etc
 
 # Expose ports
 EXPOSE 4567 4567

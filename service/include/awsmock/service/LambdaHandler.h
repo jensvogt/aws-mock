@@ -2,8 +2,8 @@
 // Created by vogje01 on 04/01/2023.
 //
 
-#ifndef AWSMOCK_RESOURCE_LAMBDAHANDLER_H
-#define AWSMOCK_RESOURCE_LAMBDAHANDLER_H
+#ifndef AWSMOCK_SERVICE_LAMBDAHANDLER_H
+#define AWSMOCK_SERVICE_LAMBDAHANDLER_H
 
 // Poco includes
 #include "Poco/Logger.h"
@@ -13,37 +13,21 @@
 #include "Poco/DateTimeFormatter.h"
 
 // AwsMock includes
-#include "awsmock/core/Configuration.h"
-#include "awsmock/core/MetricService.h"
-#include "awsmock/core/MetricServiceTimer.h"
-#include "awsmock/core/MetricDefinition.h"
-#include "awsmock/resource/HandlerException.h"
-#include "awsmock/resource/AbstractResource.h"
-#include "awsmock/service/LambdaService.h"
+#include <awsmock/core/Configuration.h>
+#include <awsmock/core/MetricService.h>
+#include <awsmock/core/MetricServiceTimer.h>
+#include <awsmock/core/MetricDefinition.h>
+#include <awsmock/service/AbstractHandler.h>
+#include <awsmock/service/LambdaService.h>
 
-namespace AwsMock {
+namespace AwsMock::Service {
 
     /**
      * AWS Lambda mock handler
      *
-     * <p>AWS S3 HTTP request handler. All S3 related REST call are ending here. Depending on the request header the S3 service will be selected in case the
-     * authorization header contains the S3 service.<p>
-     *
-     * <p><h3>GET Requests</h3>
-     * <ul>
-     * <li>S3 bucket list command: <pre>aws s3 ls --endpoint http://localhost:4567</pre></li>
-     * <li>S3 object list command: <pre>aws s3 ls s3://example-bucket --recursive --endpoint http://localhost:4567</pre></li>
-     * </ul>
-     * </p>
-     * <p><h3>POST Requests</h3>
-     * <ul>
-     * <li>Bigfile (>4MB) Initial Multipart upload: <pre>aws cp example.txt s3://example-bucket/test/example.txt --endpoint http://localhost:4567</pre></li>
-     * <li>Upload part</li>
-     * <li>Complete Multipart upload</li>
-     * </ul>
-     * <p>
+     * <p>AWS Lambda HTTP request handler. All Lambda related REST call are ending here.<p>
      */
-    class LambdaHandler : public AwsMock::Resource::AbstractResource {
+    class LambdaHandler : public AbstractHandler {
 
     public:
 
@@ -137,16 +121,12 @@ namespace AwsMock {
       Core::MetricService &_metricService;
 
       /**
-       * Lambda service port
+       * Lambda service
        */
-      int _lambdaServicePort;
-
-      /**
-       * Lambda service host
-       */
-      std::string _lambdaServiceHost;
+      Service::LambdaService _lambdaService;
 
     };
+
 } // namespace AwsMock
 
-#endif // AWSMOCK_RESOURCE_LAMBDAHANDLER_H
+#endif // AWSMOCK_SERVICE_LAMBDAHANDLER_H

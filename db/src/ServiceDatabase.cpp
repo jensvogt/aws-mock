@@ -6,27 +6,24 @@
 
 namespace AwsMock::Database {
 
-    using namespace Poco::Data::Keywords;
+    using bsoncxx::builder::basic::kvp;
+    using bsoncxx::builder::basic::make_array;
+    using bsoncxx::builder::basic::make_document;
 
-    ServiceDatabase::ServiceDatabase(const Core::Configuration &configuration) : Database(configuration), _logger(Poco::Logger::get("S3Database")) {
-        Core::Logger::SetDefaultConsoleLogger("S3Database");
+    ServiceDatabase::ServiceDatabase(const Core::Configuration &configuration) : Database(configuration), _logger(Poco::Logger::get("ServiceDatabase")) {
+
+        // Set default console logger
+        Core::Logger::SetDefaultConsoleLogger("ServiceDatabase");
+
+
+        // Get collections
+        _serviceCollection = GetConnection()["service"];
     }
 
     bool ServiceDatabase::IsActive(const std::string &name) {
 
-        int count = 0;
-        /*try {
-
-            Poco::Data::Session session = GetSession();
-            session.begin();
-            session << "SELECT COUNT(*) FROM service WHERE name=? AND active=1", bind(name), into(count), now;
-            session.close();
-
-            poco_trace(_logger, "Service is active: " + std::string(count > 0 ? "true" : "false"));
-
-        } catch (Poco::Exception &exc) {
-            poco_error(_logger, "Database exception: " + exc.message());
-        }*/
+        int64_t count = _serviceCollection.count_documents(make_document(kvp("name", name)));
+        _logger.trace() << "Service is active: " << (count > 0 ? "true" : "false") << std::endl;
         return count > 0;
     }
 } // namespace AwsMock::Database

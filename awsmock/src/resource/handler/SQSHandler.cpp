@@ -4,7 +4,7 @@
 namespace AwsMock {
 
     SQSHandler::SQSHandler(Core::Configuration &configuration, Core::MetricService &metricService)
-        : AbstractResource(), _logger(Poco::Logger::get("SQSHandler")), _configuration(configuration), _metricService(metricService), _sqsService(configuration) {
+        : AbstractResource(), _logger(Poco::Logger::get("SQSHandler")), _configuration(configuration), _metricService(metricService) {
 
         // Set default console logger
         Core::Logger::SetDefaultConsoleLogger("SQSHandler");
@@ -13,49 +13,41 @@ namespace AwsMock {
         _sqsServicePort = _configuration.getInt("awsmock.service.sqs.port", 9501);
     }
 
-    void SQSHandler::handleGet(Poco::Net::HTTPServerRequest &request,
-                               Poco::Net::HTTPServerResponse &response,
-                               [[maybe_unused]] const std::string &region,
-                               [[maybe_unused]]const std::string &user) {
+    void SQSHandler::handleGet(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response, const std::string &region, const std::string &user) {
 
         Core::MetricServiceTimer measure(_metricService, HTTP_GET_TIMER);
         _logger.debug() << "SQS GET request, URI: " << request.getURI() << " region: " << region << " user: " + user << std::endl;
 
+        SetHeaders(request, region, user);
         DumpRequest(request);
         DumpResponse(response);
     }
 
-    void SQSHandler::handlePut(Poco::Net::HTTPServerRequest &request,
-                               Poco::Net::HTTPServerResponse &response,
-                               [[maybe_unused]]const std::string &region,
-                               [[maybe_unused]]const std::string &user) {
+    void SQSHandler::handlePut(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response, const std::string &region, const std::string &user) {
 
         Core::MetricServiceTimer measure(_metricService, HTTP_PUT_TIMER);
         _logger.debug() << "SQS PUT request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl;
 
+        SetHeaders(request, region, user);
         DumpRequest(request);
         DumpResponse(response);
     }
 
-    void SQSHandler::handlePost(Poco::Net::HTTPServerRequest &request,
-                                Poco::Net::HTTPServerResponse &response,
-                                [[maybe_unused]]const std::string &region,
-                                [[maybe_unused]]const std::string &user) {
+    void SQSHandler::handlePost(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response, const std::string &region, const std::string &user) {
 
         Core::MetricServiceTimer measure(_metricService, HTTP_POST_TIMER);
         _logger.debug() << "SQS POST request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl;
 
+        SetHeaders(request, region, user);
         ForwardRequest(request, response, _sqsServiceHost, _sqsServicePort);
     }
 
-    void SQSHandler::handleDelete(Poco::Net::HTTPServerRequest &request,
-                                  Poco::Net::HTTPServerResponse &response,
-                                  [[maybe_unused]]const std::string &region,
-                                  [[maybe_unused]]const std::string &user) {
+    void SQSHandler::handleDelete(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response, const std::string &region, const std::string &user) {
 
         Core::MetricServiceTimer measure(_metricService, HTTP_DELETE_TIMER);
         _logger.debug() << "SQS DELETE request, URI: " + request.getURI() << " region: " << region << " user: " << user << std::endl;
 
+        SetHeaders(request, region, user);
         ForwardRequest(request, response, _sqsServiceHost, _sqsServicePort);
     }
 
@@ -63,7 +55,7 @@ namespace AwsMock {
         Core::MetricServiceTimer measure(_metricService, HTTP_OPTIONS_TIMER);
         _logger.debug() << "SQS OPTIONS request" << std::endl;
 
-        response.set("Allow", "GET, PUT, POST, DELETE, OPTIONS");
+        response.set("Allow", "GET, PUT, POST, DELETE, HEAD, OPTIONS");
         response.setContentType("text/plain; charset=utf-8");
 
         handleHttpStatusCode(response, 200);

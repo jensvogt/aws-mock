@@ -7,10 +7,13 @@ project(aws-mock VERSION "${GIT_VERSION}")
 configure_file (core/include/awsmock/core/Version.h.in core/include/awsmock/core/Version.h)
 
 set(CMAKE_CXX_STANDARD 20)
+
+# Set root install directory
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
-set(CMAKE_INSTALL_PREFIX "/usr/local" CACHE STRING " " FORCE)
+set(CMAKE_INSTALL_PREFIX "/usr" CACHE STRING " " FORCE)
+message("Building ${CMAKE_BUILD_TYPE}, install prefix ${CMAKE_INSTALL_PREFIX}")
 
 # Doxygen
 set(doxyfile ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile)

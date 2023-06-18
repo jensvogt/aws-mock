@@ -16,11 +16,11 @@ namespace AwsMock::Database {
     };
 
     S3Database::S3Database(const Core::Configuration &configuration) : Database(configuration), _logger(Poco::Logger::get("S3Database")) {
+
+        // Set default console logger
         Core::Logger::SetDefaultConsoleLogger("S3Database");
 
-        CreateCollection("s3_bucket");
-        CreateCollection("s3_object");
-
+        // Get collections
         _bucketCollection = GetConnection()["s3_bucket"];
         _objectCollection = GetConnection()["s3_object"];
     }

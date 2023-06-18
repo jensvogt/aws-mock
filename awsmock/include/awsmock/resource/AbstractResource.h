@@ -21,12 +21,13 @@
 #include <Poco/Net/HTTPClientSession.h>
 
 // AwsMock includes
-#include "awsmock/core/Logger.h"
+#include <awsmock/core/AwsUtils.h>
+#include <awsmock/core/Logger.h>
 #include <awsmock/core/StringUtils.h>
 #include <awsmock/core/ServiceException.h>
 #include <awsmock/core/ResourceNotFoundException.h>
-#include "awsmock/dto/s3/RestErrorResponse.h"
-#include "awsmock/dto/sqs/RestErrorResponse.h"
+#include <awsmock/dto/s3/RestErrorResponse.h>
+#include <awsmock/dto/sqs/RestErrorResponse.h>
 #include <awsmock/resource/HandlerException.h>
 
 namespace AwsMock::Resource {
@@ -258,6 +259,16 @@ namespace AwsMock::Resource {
        * @param port forward port
        */
       void ForwardRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response, const std::string &host, int port);
+
+
+      /**
+       * Set default request header values
+       *
+       * @param request HTTP request object
+       * @param region AWS request region
+       * @param user request user
+       */
+      void SetHeaders(Poco::Net::HTTPServerRequest &request, const std::string &region, const std::string &user);
 
     private:
 

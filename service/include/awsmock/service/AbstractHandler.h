@@ -232,6 +232,15 @@ namespace AwsMock::Service {
       int GetAttributeNameCount(const std::string &body, const std::string &name);
 
       /**
+       * Returns the version and action from URI
+       *
+       * @param uri URI to scan
+       * @param version version string
+       * @param action action
+       */
+      void GetVersionActionFromUri(const std::string &uri, std::string &version, std::string &action);
+
+      /**
        * Get the endpoint from the request header
        *
        * @param request HTTP request

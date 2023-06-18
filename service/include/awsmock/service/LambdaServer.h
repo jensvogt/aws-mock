@@ -2,8 +2,8 @@
 // Created by vogje01 on 04/01/2023.
 //
 
-#ifndef AWSMOCK_SERVICE_S3SERVER_H
-#define AWSMOCK_SERVICE_S3SERVER_H
+#ifndef AWSMOCK_SERVICE_LAMBDASERVER_H
+#define AWSMOCK_SERVICE_LAMBDASERVER_H
 
 // Poco includes
 #include "Poco/Logger.h"
@@ -12,20 +12,20 @@
 #include "Poco/Net/HTTPServer.h"
 
 // AwsMock includes
-#include "awsmock/core/Logger.h"
-#include "awsmock/core/Configuration.h"
-#include "awsmock/core/MetricService.h"
-#include "awsmock/service/S3HandlerFactory.h"
+#include <awsmock/core/Logger.h>
+#include <awsmock/core/Configuration.h>
+#include <awsmock/core/MetricService.h>
+#include <awsmock/service/LambdaHandlerFactory.h>
 
-#define S3_DEFAULT_PORT 9500
-#define S3_DEFAULT_HOST "localhost"
+#define LAMBDA_DEFAULT_PORT 9503
+#define LAMBDA_DEFAULT_HOST "localhost"
 
 namespace AwsMock::Service {
 
     /**
-     * S3 REST service
+     * Lambda REST service
      */
-    class S3Server {
+    class LambdaServer {
 
     public:
       /**
@@ -34,12 +34,12 @@ namespace AwsMock::Service {
        * @param configuration application configuration
        * @param metricService monitoring service
        */
-      explicit S3Server(Core::Configuration &configuration, Core::MetricService &metricService);
+      explicit LambdaServer(Core::Configuration &configuration, Core::MetricService &metricService);
 
       /**
        * Destructor
        */
-      ~S3Server();
+      ~LambdaServer();
 
       /**
        * Start the restfull service.
@@ -78,7 +78,6 @@ namespace AwsMock::Service {
        */
       Poco::Net::HTTPServer *_httpServer;
 
-
       /**
        * HTTP max message queue length
        */
@@ -93,4 +92,4 @@ namespace AwsMock::Service {
 
 } // namespace AwsMock::Service
 
-#endif //AWSMOCK_SERVICE_S3SERVER_H
+#endif //AWSMOCK_SERVICE_LAMBDASERVER_H

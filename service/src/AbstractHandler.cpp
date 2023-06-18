@@ -317,6 +317,23 @@ namespace AwsMock::Service {
         _logger.debug() << "Found attribute count, name: " << name << " count: " << count / 2 << std::endl;
         return count;
     }
+    
+    void AbstractHandler::GetVersionActionFromUri(const std::string &uri, std::string &version, std::string &action) {
+
+        Poco::RegularExpression::MatchVec posVec;
+        Poco::RegularExpression pattern(R"(/([a-z0-9-.]+)?/?([a-zA-Z0-9-_/.*'()]+)?\??.*$)");
+        if (!pattern.match(uri, 0, posVec)) {
+            throw Core::ResourceNotFoundException("Could not extract version and action");
+        }
+
+        if (posVec.size() > 1) {
+            version = uri.substr(posVec[1].offset, posVec[1].length);
+        }
+        if (posVec.size() > 2) {
+            action = uri.substr(posVec[2].offset, posVec[2].length);
+        }
+        _logger.debug() << "Found version and action, version: " << version << " action: " << action << std::endl;
+    }
 
     std::string AbstractHandler::GetEndpoint(Poco::Net::HTTPServerRequest &request) {
         return request.get("Host");

@@ -17,11 +17,7 @@
 #include "awsmock/resource/AbstractResource.h"
 #include "awsmock/service/SQSService.h"
 
-#define DEFAULT_USERID "000000000000"
-
 namespace AwsMock {
-
-    typedef std::map<std::string, std::string> AttributeList;
 
     /**
      * AWS S3 mock handler
@@ -105,53 +101,6 @@ namespace AwsMock {
     private:
 
       /**
-       * Get the action from the request body
-       *
-       * @param body HTTP request body (in)
-       * @param action SQS action (out)
-       * @param version SQS version (out)
-       */
-      void GetActionVersion(const std::string &body, std::string &action, std::string &version);
-
-      /**
-       * Get the action from the request body
-       *
-       * @param body HTTP request body
-       * @param name parameter name
-       * @return parameter value
-       */
-      std::string GetStringParameter(const std::string &body, const std::string &name);
-
-      /**
-       * Return an integer name.
-       *
-       * @param body HTTP message body
-       * @param name name name
-       * @param min minimum value
-       * @param max maximum value
-       * @param def default value
-       * @return integer name
-       */
-      int GetIntParameter(const std::string &body, const std::string &name, int min, int max, int def);
-
-      /**
-       * Returns the attribute count.
-       *
-       * @param body HTTP message body
-       * @param parameter parameter name
-       * @return number of sqs
-       */
-      int GetAttributeCount(const std::string &body, const std::string &parameter);
-
-      /**
-       * Get the endpoint from the request header
-       *
-       * @param request HTTP request
-       * @return endpoint
-       */
-      static std::string GetEndpoint(Poco::Net::HTTPServerRequest &request);
-
-      /**
        * Logger
        */
       Poco::LogStream _logger;
@@ -165,11 +114,6 @@ namespace AwsMock {
        * Metric service
        */
       Core::MetricService &_metricService;
-
-      /**
-       * SQS service
-       */
-      Service::SQSService _sqsService;
 
       /**
        * SQS service port

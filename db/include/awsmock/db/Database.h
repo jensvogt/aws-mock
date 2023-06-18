@@ -42,33 +42,6 @@ namespace AwsMock::Database {
        */
       mongocxx::database GetConnection();
 
-      /**
-       * Returns a MongoDB collection connection, without pool
-       *
-       * @return MongoDB database collection client
-       */
-      mongocxx::database GetCollection();
-
-    protected:
-
-      /**
-       * Create a collection.
-       *
-       * <p>The collection is only created, in case the collection does not exist already.</p>
-       *
-       * @param name collection name
-       */
-      void CreateCollection(const std::string &name);
-
-      /**
-       * Create a collection.
-       *
-       * <p>The collection is only dropped, in case the collection exists.</p>
-       *
-       * @param name collection name
-       */
-      void DropCollection(const std::string &name);
-
     private:
 
       /**
@@ -80,13 +53,6 @@ namespace AwsMock::Database {
        * Application configuration
        */
       const Core::Configuration &_configuration;
-
-      mongocxx::uri _uri;
-
-      /**
-       * MongoDB connection pool
-       */
-      std::shared_ptr<mongocxx::pool> _connectionPool;
 
       /**
        * Database name
@@ -112,6 +78,17 @@ namespace AwsMock::Database {
        * Database password
        */
       std::string _password;
+
+      /**
+       * MongoDB URI
+       */
+      mongocxx::uri _uri;
+
+      /**
+       * Database client
+       */
+      mongocxx::client _client;
+
     };
 
 } // namespace AwsMock::Database

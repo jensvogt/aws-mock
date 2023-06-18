@@ -11,10 +11,11 @@ namespace AwsMock::Database {
     using bsoncxx::builder::basic::make_document;
 
     LambdaDatabase::LambdaDatabase(const Core::Configuration &configuration) : Database(configuration), _logger(Poco::Logger::get("LambdaDatabase")) {
+
+        // Set default console logger
         Core::Logger::SetDefaultConsoleLogger("LambdaDatabase");
 
-        CreateCollection("lambda");
-
+        // Get collection
         _lambdaCollection = GetConnection()["lambda"];
     }
 

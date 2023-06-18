@@ -93,7 +93,7 @@ jobs:
       - name: Tag images
         run: |
           VERSION=$(git sv cv)
-          docker tag aws-mock:$VERSION ${{ secrets.DOCKER_USER }}/awsmock:latest
+          docker tag aws-mock:$VERSION ${{ secrets.DOCKER_USER }}/aws-mock:latest
           docker push ${{ secrets.DOCKER_USER }}/aws-mock:latest
 
 #      - name: Extract metadata (tags, labels) for Docker

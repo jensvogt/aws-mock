@@ -22,9 +22,16 @@ namespace AwsMock::Service {
     class SQSRequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory {
 
     public:
+
+      /**
+       * Constructor
+       *
+       * @param configuration application configuration
+       * @param metricService  monitoring
+       */
       SQSRequestHandlerFactory(Core::Configuration &configuration, Core::MetricService &metricService) : _configuration(configuration), _metricService(metricService) {}
 
-      virtual Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &) {
+      Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &) override {
           return new SQSHandler(_configuration, _metricService);
       }
 

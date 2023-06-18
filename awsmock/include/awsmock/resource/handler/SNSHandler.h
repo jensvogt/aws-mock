@@ -23,7 +23,7 @@ namespace AwsMock {
     /**
      * AWS SNS mock handler
      */
-    class SNSHandler : public AwsMock::Resource::AbstractResource {
+    class SNSHandler : public Resource::AbstractResource {
 
     public:
 
@@ -126,11 +126,17 @@ namespace AwsMock {
       Core::MetricService &_metricService;
 
       /**
-       * SNS service
+       * SNS service port
        */
-      Service::SNSService _snsService;
+      int _snsServicePort;
+
+      /**
+       * SNS service host
+       */
+      std::string _snsServiceHost;
+
     };
 
-} // namespace AwsMock::Resource::Factory
+} // namespace AwsMock::Resource
 
 #endif // AWSMOCK_RESOURCE_SNSHANDLER_H

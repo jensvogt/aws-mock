@@ -14,6 +14,10 @@
 #include "Poco/Logger.h"
 #include "Poco/LogStream.h"
 
+// MongoDB includes
+#include <bsoncxx/builder/basic/array.hpp>
+#include <bsoncxx/builder/basic/document.hpp>
+
 // AwsMock includes
 #include <awsmock/core/Logger.h>
 #include <awsmock/core/Configuration.h>
@@ -23,11 +27,6 @@
 #include <awsmock/db/Database.h>
 #include <awsmock/entity/s3/Bucket.h>
 #include <awsmock/entity/s3/Object.h>
-
-// MongoDB includes
-#include <mongocxx/stdx.hpp>
-
-#define MAX_FILES 100
 
 namespace AwsMock::Database {
 

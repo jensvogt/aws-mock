@@ -94,6 +94,16 @@ namespace AwsMock::Core {
       static std::string GetDefaultAccountId() {
           return "000000000000";
       }
+
+      /**
+       * Returns a request ID.
+       *
+       * @return request ID
+       */
+      static std::string GetRequestId() {
+          return Poco::UUIDGenerator().createRandom().toString();
+      }
+
     };
 }
 #endif //AWSMOCK_CORE_AWSUTILS_H

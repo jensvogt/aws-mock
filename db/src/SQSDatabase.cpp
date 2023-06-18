@@ -6,18 +6,16 @@
 
 namespace AwsMock::Database {
 
-    //using namespace Poco::Data::Keywords;
     using bsoncxx::builder::basic::kvp;
     using bsoncxx::builder::basic::make_array;
     using bsoncxx::builder::basic::make_document;
 
     SQSDatabase::SQSDatabase(const Core::Configuration &configuration) : Database(configuration), _logger(Poco::Logger::get("SQSDatabase")) {
 
+        // Set default console logger
         Core::Logger::SetDefaultConsoleLogger("SQSDatabase");
 
-        CreateCollection("sqs_queue");
-        CreateCollection("sqs_message");
-
+        // Get collections
         _queueCollection = GetConnection()["sqs_queue"];
         _messageCollection = GetConnection()["sqs_message"];
     }

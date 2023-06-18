@@ -37,7 +37,9 @@
 #include <awsmock/db/Database.h>
 #include <awsmock/service/S3Server.h>
 #include <awsmock/service/SQSServer.h>
-//#include <awsmock/worker/SQSWorker.h>
+#include <awsmock/service/SNSServer.h>
+#include <awsmock/service/LambdaServer.h>
+#include <awsmock/worker/SQSWorker.h>
 #include <awsmock/worker/S3Worker.h>
 #include <awsmock/worker/SQSWorker.h>
 
@@ -170,6 +172,12 @@ namespace AwsMock {
 
           // Start the SQS server
           _sqsServer.start();
+
+          // Start the SNS server
+          _snsServer.start();
+
+          // Start the lambda server
+          _lambdaServer.start();
       }
 
       /**
@@ -240,6 +248,16 @@ namespace AwsMock {
        * SQS server
        */
       Service::SQSServer _sqsServer = Service::SQSServer(_configuration, _metricService);
+
+      /**
+       * SNS server
+       */
+      Service::SNSServer _snsServer = Service::SNSServer(_configuration, _metricService);
+
+      /**
+       * Lambda server
+       */
+      Service::LambdaServer _lambdaServer = Service::LambdaServer(_configuration, _metricService);
 
       /**
        * Thread error handler

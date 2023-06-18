@@ -129,7 +129,9 @@ namespace AwsMock::Service {
        * Default account ID
        */
       std::string _accountId;
+
     };
+
 } // namespace AwsMock::Service
 
 #endif // AWSMOCK_SERVICE_SQSHANDLER_H
