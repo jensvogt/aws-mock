@@ -359,18 +359,18 @@ namespace AwsMock::Database {
         queue = _sqsDatabase.CreateQueue(queue);
         Entity::SQS::Queue dlQueue = {.region=_region, .name=DLQ_NAME, .owner=OWNER, .queueUrl=DLQ_URL, .attributes=attribute};
         dlQueue = _sqsDatabase.CreateQueue(dlQueue);
-
         Entity::SQS::Message message = {.region=_region, .queueUrl=queue.queueUrl, .body=BODY};
         _sqsDatabase.CreateMessage(message);
-        Entity::SQS::MessageList messageList;
-        _sqsDatabase.ReceiveMessages(_region, QUEUE_URL, 1, messageList);
-        Poco::Thread().sleep(1000);
-        _sqsDatabase.ResetMessages(QUEUE_URL, 1);
-        _sqsDatabase.ReceiveMessages(_region, QUEUE_URL, 1, messageList);
-        Poco::Thread().sleep(1000);
-        _sqsDatabase.ResetMessages(QUEUE_URL, 1);
 
         // act
+        Entity::SQS::MessageList messageList;
+        _sqsDatabase.ReceiveMessages(_region, QUEUE_URL, 1, messageList);
+        Poco::Thread().sleep(2000);
+        _sqsDatabase.ResetMessages(QUEUE_URL, 1);
+        _sqsDatabase.ReceiveMessages(_region, QUEUE_URL, 1, messageList);
+        Poco::Thread().sleep(2000);
+        _sqsDatabase.ResetMessages(QUEUE_URL, 1);
+
         _sqsDatabase.RedriveMessages(QUEUE_URL, redrivePolicy);
         long queueResult = _sqsDatabase.CountMessages(_region, queue.queueUrl);
         long dlqResult = _sqsDatabase.CountMessages(_region, dlQueue.queueUrl);
