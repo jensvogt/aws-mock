@@ -24,26 +24,26 @@ namespace AwsMock::Service {
 
     Dto::SQS::CreateQueueResponse SQSService::CreateQueue(const Dto::SQS::CreateQueueRequest &request) {
 
-        Database::Entity::SQS::Queue queue;
-        try {
-            // Check existence
-            if (_database->QueueExists(request.region, request.name)) {
-                throw Core::ServiceException("SQS Queue exists already", 500);
-            }
+        // Check existence
+        if (_database->QueueExists(request.region, request.name)) {
+            throw Core::ServiceException("SQS Queue exists already", 400);
+        }
 
+        try {
             // Set default attributes
             std::string queueArn = Core::AwsUtils::CreateSQSQueueArn(request.region, _accountId, request.name);
             Database::Entity::SQS::QueueAttribute attribute {};
 
             // Update database
-            queue = _database->CreateQueue({.region=request.region, .name=request.name, .owner=request.owner, .queueUrl=request.queueUrl, .queueArn=queueArn});
+            Database::Entity::SQS::Queue queue = _database->CreateQueue({.region=request.region, .name=request.name, .owner=request.owner, .queueUrl=request.queueUrl, .queueArn=queueArn});
             _logger.trace() << "SQS queue created: " << queue.ToString() << std::endl;
 
-        } catch (Poco::Exception &exc) {
+            return {.region=queue.region, .name=queue.name, .owner=queue.owner, .queueUrl=queue.queueUrl};
+
+        } catch (Core::DatabaseException &exc) {
             _logger.error() << "SQS create queue failed, message: " << exc.message() << std::endl;
-            throw Core::ServiceException(exc.message(), 500);
+            throw Core::ServiceException(exc.message(), 400);
         }
-        return {.region=queue.region, .name=queue.name, .owner=queue.owner, .queueUrl=queue.queueUrl};
     }
 
     Dto::SQS::ListQueueResponse SQSService::ListQueues(const std::string &region) {

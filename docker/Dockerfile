@@ -82,7 +82,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN mkdir -p /tmp/awsmock/data/s3 && \
     mkdir -p /tmp/awsmock/data/sqs && \
     mkdir -p /tmp/awsmock/data/lambda && \
-    mkdir -p /tmp/awsmock/data/tmp
+    mkdir -p /tmp/awsmock/init
 
 # Add properties
 

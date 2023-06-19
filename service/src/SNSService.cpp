@@ -27,23 +27,23 @@ namespace AwsMock::Service {
     Dto::SNS::CreateTopicResponse SNSService::CreateTopic(const Dto::SNS::CreateTopicRequest &request) {
         _logger.trace() << "Create topic request: " << request.ToString() << std::endl;
 
-        Database::Entity::SNS::Topic topic;
-        try {
-            // Check existence
-            if (_snsDatabase->TopicExists(request.region, request.topicName)) {
-                throw Core::ServiceException("SQS Queue exists already", 500);
-            }
+        // Check existence
+        if (_snsDatabase->TopicExists(request.region, request.topicName)) {
+            throw Core::ServiceException("SNS topic exists already", 400);
+        }
 
+        try {
             // Update database
             std::string topicArn = Core::AwsUtils::CreateSNSTopicArn(request.region, _accountId, request.topicName);
-            topic = _snsDatabase->CreateTopic({.region=request.region, .topicName=request.topicName, .owner=request.owner, .topicArn=topicArn});
+            Database::Entity::SNS::Topic topic = _snsDatabase->CreateTopic({.region=request.region, .topicName=request.topicName, .owner=request.owner, .topicArn=topicArn});
             _logger.trace() << "SNS topic created: " << topic.ToString() << std::endl;
 
-        } catch (Poco::Exception &exc) {
+            return {.region=topic.region, .name=topic.topicName, .owner=topic.owner, .topicArn=topic.topicArn};
+
+        } catch (Core::DatabaseException &exc) {
             _logger.error() << "SNS create topic failed, message: " << exc.message() << std::endl;
-            throw Core::ServiceException(exc.message(), 500);
+            throw Core::ServiceException(exc.message(), 400);
         }
-        return {.region=topic.region, .name=topic.topicName, .owner=topic.owner, .topicArn=topic.topicArn};
     }
 
     Dto::SNS::ListTopicsResponse SNSService::ListTopics(const std::string &region) {
