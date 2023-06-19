@@ -168,7 +168,7 @@ namespace AwsMock::Service {
     void SNSService::SendSQSMessage(const Database::Entity::SNS::Subscription &subscription, const std::string &message) {
 
         Database::Entity::SQS::Queue sqsQueue = _sqsDatabase->GetQueueByArn(subscription.endpoint);
-        _sqsService->CreateMessage({.url = sqsQueue.queueUrl, .body=message});
+        _sqsService->CreateMessage({.queueUrl = sqsQueue.queueUrl, .body=message});
     }
 
 } // namespace AwsMock::Service

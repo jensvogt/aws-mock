@@ -64,6 +64,32 @@ namespace AwsMock::Database {
         EXPECT_TRUE(result.region == _region);
     }
 
+    TEST_F(SQSDatabaseTest, QueueExistsUrlTest) {
+
+        // arrange
+        Entity::SQS::Queue queue = {.region=_region, .name=QUEUE_NAME, .owner=OWNER, .queueUrl=QUEUE_URL, .queueArn=_queueArn};
+        _sqsDatabase.CreateQueue(queue);
+
+        // act
+        bool result = _sqsDatabase.QueueUrlExists(QUEUE_URL);
+
+        // assert
+        EXPECT_TRUE(result);
+    }
+
+    TEST_F(SQSDatabaseTest, QueueExistsArnTest) {
+
+        // arrange
+        Entity::SQS::Queue queue = {.region=_region, .name=QUEUE_NAME, .owner=OWNER, .queueUrl=QUEUE_URL, .queueArn=_queueArn};
+        _sqsDatabase.CreateQueue(queue);
+
+        // act
+        bool result = _sqsDatabase.QueueArnExists(_queueArn);
+
+        // assert
+        EXPECT_TRUE(result);
+    }
+
     TEST_F(SQSDatabaseTest, QueueByIdTest) {
 
         // arrange

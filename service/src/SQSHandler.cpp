@@ -71,10 +71,11 @@ namespace AwsMock::Service {
 
             } else if (action == "SendMessage") {
 
-                std::string url = GetStringParameter(payload, "QueueUrl");
+                std::string queueUrl = GetStringParameter(payload, "QueueUrl");
+                std::string queueArn = GetStringParameter(payload, "QueueArn");
                 std::string body = GetStringParameter(payload, "MessageBody");
 
-                Dto::SQS::CreateMessageRequest sqsRequest = {.region=region, .url=url, .body=body};
+                Dto::SQS::CreateMessageRequest sqsRequest = {.region=region, .queueUrl=queueUrl, .queueArn=queueArn,  .body=body};
                 Dto::SQS::CreateMessageResponse sqsResponse = _sqsService.CreateMessage(sqsRequest);
                 SendOkResponse(response, sqsResponse.ToXml());
 

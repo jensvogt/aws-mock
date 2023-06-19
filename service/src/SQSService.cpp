@@ -69,7 +69,7 @@ namespace AwsMock::Service {
         Dto::SQS::PurgeQueueResponse response = {.resource=request.resource, .requestId=request.requestId};
         try {
             // Check existence
-            if (!_database->QueueExists(request.queueUrl)) {
+            if (!_database->QueueUrlExists(request.queueUrl)) {
                 throw Core::ServiceException("SQS queue does not exists", 500, request.resource.c_str(), request.requestId.c_str());
             }
 
@@ -113,7 +113,7 @@ namespace AwsMock::Service {
         Dto::SQS::SetQueueAttributesResponse response;
         try {
             // Check existence
-            if (!_database->QueueExists(request.queueUrl)) {
+            if (!_database->QueueUrlExists(request.queueUrl)) {
                 throw Core::ServiceException("Queue does not exist", 500);
             }
 
@@ -145,7 +145,7 @@ namespace AwsMock::Service {
         Dto::SQS::DeleteQueueResponse response;
         try {
             // Check existence
-            if (!_database->QueueExists(request.queueUrl)) {
+            if (!_database->QueueUrlExists(request.queueUrl)) {
                 throw Core::ServiceException("Queue does not exist", 500);
             }
 
@@ -163,18 +163,28 @@ namespace AwsMock::Service {
 
         Database::Entity::SQS::Message message;
         try {
-            // Check existence
-            if (!_database->QueueExists(request.url)) {
+            if (!request.queueUrl.empty() && !_database->QueueUrlExists(request.queueUrl)) {
                 throw Core::ServiceException("SQS queue does not exists", 500);
+            } else if (!request.queueArn.empty() && !_database->QueueArnExists(request.queueArn)) {
+                throw Core::ServiceException("SQS queue does not exists", 500);
+            }
+
+            // Get queue in case of ARN
+            Database::Entity::SQS::Queue queue;
+            if (!request.queueUrl.empty()) {
+                queue = _database->GetQueueByUrl(request.queueUrl);
+            } else if (!request.queueArn.empty()) {
+                queue = _database->GetQueueByArn(request.queueArn);
             }
 
             // Update database
             std::string messageId = Core::StringUtils::GenerateRandomString(100);
             std::string receiptHandle = Core::StringUtils::GenerateRandomString(512);
-            std::string md5Body = Core::Crypto::GetMd5FromString(request.body);
-            std::string md5Attr = Core::Crypto::GetMd5FromString(request.body);
-            message = _database->CreateMessage({.region= request.region, .queueUrl=request.url, .body=request.body, .messageId=messageId, .receiptHandle=receiptHandle,
-                                                .md5Body=md5Body, .md5Attr=md5Attr});
+            std::string md5Body = GetMd5Body(request.body);
+            std::string md5Attr = GetMd5Attributes(request.messageAttributes);
+            message =
+                _database->CreateMessage({.region= request.region, .queueUrl=queue.queueUrl, .body=request.body, .messageId=messageId, .receiptHandle=receiptHandle,
+                                             .md5Body=md5Body, .md5Attr=md5Attr});
 
         } catch (Poco::Exception &ex) {
             _logger.error() << "SQS create message failed, message: " << ex.message() << std::endl;
@@ -225,7 +235,7 @@ namespace AwsMock::Service {
         Dto::SQS::DeleteMessageResponse response;
         try {
             // TODO: Check existence
-            /*if (!_lambdaDatabase->MessageExists(request.url)) {
+            /*if (!_database->MessageExists(request.url)) {
                 throw Core::ServiceException("Queue does not exist", 500);
             }*/
 
@@ -239,4 +249,19 @@ namespace AwsMock::Service {
         return response;
     }
 
+    std::string SQSService::GetMd5Body(const std::string &body) {
+        std::string md5sum = Core::Crypto::GetMd5FromString(body);
+        _logger.trace() << "MD5 of body: " << md5sum << std::endl;
+        return md5sum;
+    }
+
+    std::string SQSService::GetMd5Attributes(const Dto::SQS::MessageAttributeList &attributes) {
+        std::stringstream attrString;
+        for (const auto &s : attributes) {
+            attrString << s.attributeName << s.type << s.transportType << s.attributeValue;
+        }
+        std::string md5sum = Core::Crypto::GetMd5FromString(attrString.str());
+        _logger.trace() << "MD5 of attributes: " << md5sum << std::endl;
+        return md5sum;
+    }
 } // namespace AwsMock::Service

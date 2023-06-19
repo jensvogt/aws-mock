@@ -139,6 +139,22 @@ namespace AwsMock::Service {
       void Initialize();
 
       /**
+       * Returns the MD5 sum of the message body.
+       *
+       * @param body message body
+       * @return MD5 sum of message body
+       */
+      std::string GetMd5Body(const std::string &body);
+
+      /**
+       * Returns the MD5 sum of all attributes.
+       *
+       * @param attributes vector of attributes
+       * @return MD5 sum of attributes string
+       */
+      std::string GetMd5Attributes(const Dto::SQS::MessageAttributeList &attributes);
+
+      /**
        * Logger
        */
       Poco::LogStream _logger;

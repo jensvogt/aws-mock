@@ -20,7 +20,7 @@ namespace AwsMock::Database {
         _messageCollection = GetConnection()["sqs_message"];
     }
 
-    bool SQSDatabase::QueueExists(const std::string &queueUrl) {
+    bool SQSDatabase::QueueUrlExists(const std::string &queueUrl) {
 
         int64_t count = _queueCollection.count_documents(make_document(kvp("queueUrl", queueUrl)));
         _logger.trace() << "Queue exists: " << (count > 0 ? "true" : "false") << std::endl;
@@ -30,6 +30,13 @@ namespace AwsMock::Database {
     bool SQSDatabase::QueueExists(const std::string &region, const std::string &name) {
 
         int64_t count = _queueCollection.count_documents(make_document(kvp("region", region), kvp("name", name)));
+        _logger.trace() << "Queue exists: " << (count > 0 ? "true" : "false") << std::endl;
+        return count > 0;
+    }
+
+    bool SQSDatabase::QueueArnExists(const std::string &queueArn) {
+
+        int64_t count = _queueCollection.count_documents(make_document(kvp("queueArn", queueArn)));
         _logger.trace() << "Queue exists: " << (count > 0 ? "true" : "false") << std::endl;
         return count > 0;
     }
