@@ -87,6 +87,20 @@ namespace AwsMock::Database {
         return result;
     }
 
+    std::vector<Entity::Lambda::Lambda> LambdaDatabase::ListLambdas(const std::string &region) {
+
+        std::vector<Entity::Lambda::Lambda> lambdas;
+        auto lamdaCursor = _lambdaCollection.find(make_document(kvp("region", region)));
+        for (auto lambda : lamdaCursor) {
+            Entity::Lambda::Lambda result;
+            result.FromDocument(lambda);
+            lambdas.push_back(result);
+        }
+        _logger.trace() << "Got lamda list, size:" << lambdas.size() << std::endl;
+
+        return lambdas;
+    }
+
     void LambdaDatabase::DeleteLambda(const std::string &functionName) {
 
         auto result = _lambdaCollection.delete_many(make_document(kvp("function", functionName)));

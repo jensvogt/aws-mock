@@ -7,12 +7,12 @@
 
 // Poco includes
 #include "Poco/Logger.h"
-#include "Poco/LogStream.h"
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
 #include "Poco/Net/HTTPServer.h"
 
 // AwsMock includes
 #include "awsmock/core/Logger.h"
+#include "awsmock/core/LogStream.h"
 #include "awsmock/core/Configuration.h"
 #include "awsmock/core/MetricService.h"
 #include "awsmock/service/S3HandlerFactory.h"
@@ -61,7 +61,7 @@ namespace AwsMock::Service {
       /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
       * Application configuration
@@ -77,7 +77,6 @@ namespace AwsMock::Service {
        * HTTP server instance
        */
       Poco::Net::HTTPServer *_httpServer;
-
 
       /**
        * HTTP max message queue length

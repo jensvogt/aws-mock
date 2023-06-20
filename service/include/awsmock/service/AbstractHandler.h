@@ -11,7 +11,6 @@
 
 // Poco includes
 #include "Poco/Logger.h"
-#include "Poco/LogStream.h"
 #include "Poco/URI.h"
 #include "Poco/StreamCopier.h"
 #include <Poco/RegularExpression.h>
@@ -21,12 +20,12 @@
 
 // AwsMock includes
 #include "awsmock/core/Logger.h"
+#include "awsmock/core/LogStream.h"
 #include <awsmock/core/StringUtils.h>
 #include <awsmock/core/ServiceException.h>
 #include <awsmock/core/ResourceNotFoundException.h>
 #include "awsmock/dto/s3/RestErrorResponse.h"
 #include "awsmock/dto/sqs/RestErrorResponse.h"
-//#include <awsmock/resource/HandlerException.h>
 
 namespace AwsMock::Service {
 
@@ -336,7 +335,7 @@ namespace AwsMock::Service {
       /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
        * Base URL

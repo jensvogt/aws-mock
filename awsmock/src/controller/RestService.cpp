@@ -13,7 +13,7 @@ namespace AwsMock {
 
         _port = _configuration.getInt("awsmock.rest.port", DEFAULT_PORT);
         _host = _configuration.getString("awsmock.rest.host", DEFAULT_HOST);
-        poco_debug(_logger, "Rest service initialized, endpoint: " + _host  + ":" + std::to_string(_port));
+        log_debug_stream(_logger) << "Rest service initialized, endpoint: " << _host << ":" << _port << std::endl;
     }
 
     RestService::~RestService() {
@@ -47,7 +47,7 @@ namespace AwsMock {
         _httpServer = new Poco::Net::HTTPServer(getRouter(), Poco::Net::ServerSocket(Poco::UInt16(_port)), httpServerParams);
 
         _httpServer->start();
-        poco_information(_logger, "AwsMock gateway started, endpoint: http://" + _host + ":" + std::to_string(_port));
+        log_info_stream(_logger) << "AwsMock gateway started, endpoint: http://" << _host << ":" << _port << std::endl;
     }
 
     void RestService::start(Poco::Net::HTTPRequestHandlerFactory *router, int port) {

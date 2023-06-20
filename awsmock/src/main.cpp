@@ -30,6 +30,7 @@
 
 // AwsMock includes
 #include <awsmock/core/Logger.h>
+#include <awsmock/core/LogStream.h>
 #include <awsmock/core/ThreadErrorHandler.h>
 #include <awsmock/config/Configuration.h>
 #include <awsmock/controller/Router.h>
@@ -63,9 +64,8 @@ namespace AwsMock {
           InitializeMonitoring();
           InitializeErrorHandler();
           InitializeIndexes();
-          poco_information(_logger,
-                           "Starting " + Configuration::GetAppName() + " v" + Configuration::GetVersion() + " pid: " + std::to_string(getpid()) + " loglevel: "
-                               + _configuration.GetLogLevel());
+          log_info_stream(_logger) << "Starting " << Configuration::GetAppName() << " v" << Configuration::GetVersion() << " pid: " << getpid() << " loglevel: "
+                                   << _configuration.GetLogLevel() << std::endl;
           Poco::Util::ServerApplication::initialize(self);
       }
 
@@ -74,14 +74,14 @@ namespace AwsMock {
        */
       [[maybe_unused]] void uninitialize() override {
 
-          poco_debug(_logger, "Starting system shutdown");
+          log_debug_stream(_logger) << "Starting system shutdown" << std::endl;
 
           // Shutdown monitoring
           _metricService.ShutdownServer();
-          poco_debug(_logger, "Metric server stopped");
+          log_debug_stream(_logger) << "Metric server stopped" << std::endl;
 
           Poco::Util::Application::uninitialize();
-          poco_debug(_logger, "Bye, bye, and thanks for all the fish");
+          log_debug_stream(_logger) << "Bye, bye, and thanks for all the fish" << std::endl;
       }
 
       /**
@@ -125,7 +125,7 @@ namespace AwsMock {
           } else if (name == "level") {
 
               _configuration.SetLogLevel(value);
-              _logger.setLevel(value);
+              _logger.level(value);
               Core::Logger::SetLogLevel(value);
           }
       }
@@ -154,7 +154,7 @@ namespace AwsMock {
 
           // Install error handler
           Poco::ErrorHandler::set(&_threadErrorHandler);
-          poco_debug(_logger, "Error handler initialized");
+          log_debug_stream(_logger) << "Error handler initialized" << std::endl;
       }
 
       /**
@@ -164,7 +164,7 @@ namespace AwsMock {
 
           // Install error handler
           _database.CreateIndexes();
-          poco_debug(_logger, "Database indexes created");
+          log_debug_stream(_logger) << "Database indexes created" << std::endl;
       }
 
       void StartWorker() {
@@ -199,7 +199,7 @@ namespace AwsMock {
        */
       int main([[maybe_unused]]const ArgVec &args) override {
 
-          poco_debug(_logger, "Entering main routine");
+          log_debug_stream(_logger) << "Entering main routine" << std::endl;
 
           StartWorker();
 
@@ -218,7 +218,7 @@ namespace AwsMock {
       /**
        * Logger
        */
-      Poco::Logger &_logger = Poco::Logger::get("root");
+      Core::LogStream _logger = Poco::Logger::get("root");
 
       /**
        * Application configuration

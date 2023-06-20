@@ -111,6 +111,22 @@ namespace AwsMock::Database {
         EXPECT_EQ(result.role, lambda.role);
     }
 
+    TEST_F(LambdaDatabaseTest, LambdaListTest) {
+
+        // arrange
+        Entity::Lambda::Lambda lambda = {.region=_region, .function=FUNCTION, .runtime=RUNTIME, .role=ROLE, .handler=HANDLER, .size=1000};
+        lambda = _lambdaDatabase.CreateLambda(lambda);
+
+        // act
+        std::vector<Entity::Lambda::Lambda> result = _lambdaDatabase.ListLambdas(lambda.region);
+
+        // assert
+        EXPECT_EQ(1, result.size());
+        EXPECT_TRUE(result[0].runtime == RUNTIME);
+        EXPECT_TRUE(result[0].role == ROLE);
+        EXPECT_TRUE(result[0].handler == HANDLER);
+    }
+
     TEST_F(LambdaDatabaseTest, LambdaDeleteTest) {
 
         // arrange

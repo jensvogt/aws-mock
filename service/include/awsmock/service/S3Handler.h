@@ -6,8 +6,6 @@
 #define AWSMOCK_SERVICE_S3HANDLER_H
 
 // Poco includes
-#include "Poco/Logger.h"
-#include "Poco/LogStream.h"
 #include "Poco/DateTime.h"
 #include "Poco/DateTimeFormat.h"
 #include "Poco/DateTimeFormatter.h"
@@ -131,7 +129,7 @@ namespace AwsMock::Service {
       /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
        * S3 handler configuration

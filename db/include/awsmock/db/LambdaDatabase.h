@@ -118,6 +118,14 @@ namespace AwsMock::Database {
       Entity::Lambda::Lambda GetLambdaByArn(const std::string &arn);
 
       /**
+       * Returns a list of lambda functions.
+       *
+       * @param region AWS region name
+       * @return list of lambda functions
+       */
+      std::vector<Entity::Lambda::Lambda> ListLambdas(const std::string &region);
+
+      /**
        * Deletes an existing lambda function
        *
        * @param functionName lambda function name

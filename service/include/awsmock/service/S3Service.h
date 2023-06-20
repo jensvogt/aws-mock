@@ -8,10 +8,6 @@
 // C++ standard includes
 #include <string>
 
-// Poco includes
-#include <Poco/Logger.h>
-#include <Poco/LogStream.h>
-
 // AwsMock includes
 #include "awsmock/core/CryptoUtils.h"
 #include "awsmock/core/ServiceException.h"
@@ -270,7 +266,7 @@ namespace AwsMock::Service {
       /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
        * Data directory

@@ -22,6 +22,7 @@
 
 // AwsMock includes
 #include <awsmock/core/AwsUtils.h>
+#include <awsmock/core/LogStream.h>
 #include <awsmock/core/Logger.h>
 #include <awsmock/core/StringUtils.h>
 #include <awsmock/core/ServiceException.h>
@@ -284,7 +285,7 @@ namespace AwsMock::Resource {
       /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
        * Base URL
@@ -316,6 +317,8 @@ namespace AwsMock::Resource {
        */
       HeaderMap _headerMap;
     };
+
+#define awsmock_debug(logger) logger.debug() << __FILE__ << ":" << __LINE__
 
 } // namespace AwsMock::Resource
 

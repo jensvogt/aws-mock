@@ -10,8 +10,6 @@
 #include <sstream>
 
 // Poco includes
-#include <Poco/Logger.h>
-#include <Poco/LogStream.h>
 #include <Poco/Net/HTTPClientSession.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
@@ -28,8 +26,9 @@
 #include <awsmock/db/LambdaDatabase.h>
 #include <awsmock/db/S3Database.h>
 #include <awsmock/dto/s3/EventNotification.h>
-#include <awsmock/dto/lambda/CreateFunctionResponse.h>
 #include <awsmock/dto/lambda/CreateFunctionRequest.h>
+#include <awsmock/dto/lambda/CreateFunctionResponse.h>
+#include <awsmock/dto/lambda/ListFunctionResponse.h>
 #include <awsmock/dto/lambda/DeleteFunctionRequest.h>
 #include <awsmock/service/DockerService.h>
 
@@ -53,6 +52,14 @@ namespace AwsMock::Service {
        * @return CreateFunctionResponse
        */
       Dto::Lambda::CreateFunctionResponse CreateFunctionConfiguration(Dto::Lambda::CreateFunctionRequest &request);
+
+      /**
+       * List lambda functions
+       *
+       * @param region AWS region name
+       * @return CreateFunctionResponse
+       */
+      Dto::Lambda::ListFunctionResponse ListFunctionConfiguration(const std::string &region);
 
       /**
        * Invoke lambda function
@@ -100,7 +107,7 @@ namespace AwsMock::Service {
       /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
        * Data directory

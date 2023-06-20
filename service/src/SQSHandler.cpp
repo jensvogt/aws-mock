@@ -17,7 +17,7 @@ namespace AwsMock::Service {
                                [[maybe_unused]] const std::string &region,
                                [[maybe_unused]]const std::string &user) {
         Core::MetricServiceTimer measure(_metricService, HTTP_GET_TIMER);
-        _logger.debug() << "SQS GET request, URI: " << request.getURI() << " region: " << region << " user: " + user << std::endl;
+        log_debug_stream(_logger) << "SQS GET request, URI: " << request.getURI() << " region: " << region << " user: " + user << std::endl;
         DumpRequest(request);
         DumpResponse(response);
     }
@@ -27,7 +27,7 @@ namespace AwsMock::Service {
                                [[maybe_unused]]const std::string &region,
                                [[maybe_unused]]const std::string &user) {
         Core::MetricServiceTimer measure(_metricService, HTTP_PUT_TIMER);
-        _logger.debug() << "SQS PUT request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl;
+        log_debug_stream(_logger) << "SQS PUT request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl;
         DumpRequest(request);
         DumpResponse(response);
     }
@@ -37,7 +37,7 @@ namespace AwsMock::Service {
                                 [[maybe_unused]]const std::string &region,
                                 [[maybe_unused]]const std::string &user) {
         Core::MetricServiceTimer measure(_metricService, HTTP_POST_TIMER);
-        _logger.debug() << "SQS POST request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl;
+        log_debug_stream(_logger) << "SQS POST request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl;
 
         try {
             //DumpBody(request);
@@ -106,7 +106,7 @@ namespace AwsMock::Service {
                 std::string queueUrl = GetStringParameter(payload, "QueueUrl");
 
                 int count = GetAttributeNameCount(payload, "AttributeName");
-                _logger.trace() << "Got attribute names count: " << count << std::endl;
+                log_trace_stream(_logger)<< "Got attribute names count: " << count << std::endl;
 
                 std::vector<std::string> attributeNames;
                 for(int i = 1; i <= count; i++) {
@@ -124,7 +124,7 @@ namespace AwsMock::Service {
                 std::string queueUrl = GetStringParameter(payload, "QueueUrl");
 
                 int count = GetAttributeCount(payload, "Attribute");
-                _logger.trace() << "Got attribute count, count: " << count << std::endl;
+                log_trace_stream(_logger)<< "Got attribute count, count: " << count << std::endl;
 
                 AttributeList attributes;
                 for(int i = 1; i <= count; i++) {
@@ -160,14 +160,14 @@ namespace AwsMock::Service {
                                   [[maybe_unused]]const std::string &region,
                                   [[maybe_unused]]const std::string &user) {
         Core::MetricServiceTimer measure(_metricService, HTTP_DELETE_TIMER);
-        _logger.debug() << "SQS DELETE request, URI: " + request.getURI() << " region: " << region << " user: " << user << std::endl;
+        log_debug_stream(_logger) << "SQS DELETE request, URI: " + request.getURI() << " region: " << region << " user: " << user << std::endl;
         DumpRequest(request);
         DumpResponse(response);
     }
 
     void SQSHandler::handleOptions(Poco::Net::HTTPServerResponse &response) {
         Core::MetricServiceTimer measure(_metricService, HTTP_OPTIONS_TIMER);
-        _logger.debug() << "SQS OPTIONS request" << std::endl;
+        log_debug_stream(_logger) << "SQS OPTIONS request" << std::endl;
 
         response.set("Allow", "GET, PUT, POST, DELETE, OPTIONS");
         response.setContentType("text/plain; charset=utf-8");
@@ -179,7 +179,7 @@ namespace AwsMock::Service {
 
     void SQSHandler::handleHead([[maybe_unused]]Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) {
         Core::MetricServiceTimer measure(_metricService, HTTP_OPTIONS_TIMER);
-        _logger.debug() << "SQS HEAD request, address: " << request.clientAddress().toString() << std::endl;
+        log_debug_stream(_logger) << "SQS HEAD request, address: " << request.clientAddress().toString() << std::endl;
 
         handleHttpStatusCode(response, 200);
         std::ostream &outputStream = response.send();

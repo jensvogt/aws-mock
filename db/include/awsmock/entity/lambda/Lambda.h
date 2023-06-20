@@ -206,5 +206,7 @@ namespace AwsMock::Database::Entity::Lambda {
 
     };
 
+    typedef struct Lambda Lambda;
+    typedef std::vector<Lambda> LambdaList;
 }
 #endif //AWSMOCK_DB_ENTITY_LAMBDA_H

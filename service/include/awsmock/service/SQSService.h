@@ -10,14 +10,11 @@
 #include <chrono>
 #include <ctime>
 
-// Poco includes
-#include <Poco/Logger.h>
-#include <Poco/LogStream.h>
-
 // AwsMock includes
+#include "awsmock/core/AwsUtils.h"
+#include "awsmock/core/LogStream.h"
 #include "awsmock/core/CryptoUtils.h"
 #include "awsmock/core/ServiceException.h"
-#include "awsmock/core/AwsUtils.h"
 #include "awsmock/dto/sqs/CreateMessageRequest.h"
 #include "awsmock/dto/sqs/CreateMessageResponse.h"
 #include "awsmock/dto/sqs/CreateQueueRequest.h"
@@ -157,7 +154,7 @@ namespace AwsMock::Service {
       /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
        * Account ID

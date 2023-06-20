@@ -28,11 +28,11 @@ namespace AwsMock::Service {
         if (!Core::DirUtils::DirectoryExists(_tempDir)) {
             Core::DirUtils::MakeDirectory(_tempDir);
         }
-        _logger.debug() << "Lambda service initialized" << std::endl;
+        log_debug_stream(_logger) << "Lambda service initialized" << std::endl;
     }
 
     Dto::Lambda::CreateFunctionResponse LambdaService::CreateFunctionConfiguration(Dto::Lambda::CreateFunctionRequest &request) {
-        _logger.debug() << "Create function configuration request: " + request.ToString() << std::endl;
+        log_debug_stream(_logger) << "Create function configuration request: " + request.ToString() << std::endl;
 
         Database::Entity::Lambda::Lambda lambdaEntity = {.function=request.functionName, .runtime=request.runtime, .role=request.role, .handler=request.handler,
             .tag=IMAGE_TAG};
@@ -84,8 +84,23 @@ namespace AwsMock::Service {
         return response;
     }
 
+    Dto::Lambda::ListFunctionResponse LambdaService::ListFunctionConfiguration(const std::string &region) {
+
+        try {
+            std::vector<Database::Entity::Lambda::Lambda> lambdas = _lambdaDatabase->ListLambdas(region);
+
+            auto response = Dto::Lambda::ListFunctionResponse(lambdas);
+            log_trace_stream(_logger) << "Lambda list outcome: " + response.ToJson() << std::endl;
+            return response;
+
+        } catch (Poco::Exception &ex) {
+            log_error_stream(_logger) << "Lambda list request failed, message: " << ex.message() << std::endl;
+            throw Core::ServiceException(ex.message(), 500);
+        }
+    }
+
     void LambdaService::InvokeEventFunction(const Dto::S3::EventNotification &eventNotification) {
-        _logger.debug() << "Invocation event function eventNotification: " + eventNotification.ToString() << std::endl;
+        log_debug_stream(_logger) << "Invocation event function eventNotification: " + eventNotification.ToString() << std::endl;
 
         for (const auto &record : eventNotification.records) {
 
@@ -97,22 +112,22 @@ namespace AwsMock::Service {
                 });
             if (notification != bucket.notifications.end()) {
 
-                _logger.debug() << "Got bucket eventNotification: " << notification->ToString() << std::endl;
+                log_debug_stream(_logger) << "Got bucket eventNotification: " << notification->ToString() << std::endl;
 
                 // Get the lambda entity
                 Database::Entity::Lambda::Lambda lambda = _lambdaDatabase->GetLambdaByArn(notification->lambdaArn);
-                _logger.debug() << "Got lambda entity eventNotification: " + lambda.ToString() << std::endl;
+                log_debug_stream(_logger) << "Got lambda entity eventNotification: " + lambda.ToString() << std::endl;
 
                 SendInvocationRequest(lambda.hostPort, eventNotification.ToJson());
             }
         }
     }
 
-    void LambdaService::DeleteFunction(Dto::Lambda::DeleteFunctionRequest &request){
-        _logger.debug() << "Invocation event function notification: " + request.ToString() << std::endl;
+    void LambdaService::DeleteFunction(Dto::Lambda::DeleteFunctionRequest &request) {
+        log_debug_stream(_logger) << "Invocation event function notification: " + request.ToString() << std::endl;
 
-        if(!_lambdaDatabase->LambdaExists(request.functionName)) {
-            _logger.error() << "Lambda function does not exist, function: " + request.functionName << std::endl;
+        if (!_lambdaDatabase->LambdaExists(request.functionName)) {
+            log_error_stream(_logger) << "Lambda function does not exist, function: " + request.functionName << std::endl;
             throw Core::ServiceException("Lambda function does not exist", 500);
         }
 
@@ -120,13 +135,13 @@ namespace AwsMock::Service {
         if (_dockerService->ContainerExists(request.functionName, "latest")) {
             Dto::Docker::Container container = _dockerService->GetContainerByName(request.functionName, "latest");
             _dockerService->DeleteContainer(container);
-            _logger.debug() << "Docker container deleted, function: " + request.functionName << std::endl;
+            log_debug_stream(_logger) << "Docker container deleted, function: " + request.functionName << std::endl;
         }
 
         // Delete the image, if existing
         if (_dockerService->ImageExists(request.functionName, "latest")) {
             _dockerService->DeleteImage(request.functionName, "latest");
-            _logger.debug() << "Docker image deleted, function: " + request.functionName << std::endl;
+            log_debug_stream(_logger) << "Docker image deleted, function: " + request.functionName << std::endl;
         }
 
         _lambdaDatabase->DeleteLambda(request.functionName);
@@ -161,19 +176,19 @@ namespace AwsMock::Service {
         // Create HTTP request and set headers
         Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
         Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_POST, path, Poco::Net::HTTPMessage::HTTP_1_1);
-        request.add("Content-Type","application/json");
-        request.setContentLength((long)body.length());
-        _logger.debug() << "Invocation request defined, body: " + body << std::endl;
+        request.add("Content-Type", "application/json");
+        request.setContentLength((long) body.length());
+        log_debug_stream(_logger) << "Invocation request defined, body: " + body << std::endl;
 
         // Send request
-        std::ostream& os = session.sendRequest(request);
+        std::ostream &os = session.sendRequest(request);
         os << body;
 
         // Get the response status
         Poco::Net::HTTPResponse response;
         if (response.getStatus() != Poco::Net::HTTPResponse::HTTP_OK) {
-            _logger.error() << "HTTP error, status: " + std::to_string(response.getStatus()) + " reason: "+ response.getReason() << std::endl;
+            log_error_stream(_logger) << "HTTP error, status: " + std::to_string(response.getStatus()) + " reason: " + response.getReason() << std::endl;
         }
-        _logger.debug() << "Invocation request send, status: " << response.getStatus() << std::endl;
+        log_debug_stream(_logger) << "Invocation request send, status: " << response.getStatus() << std::endl;
     }
 } // namespace AwsMock::Service

@@ -15,14 +15,14 @@ namespace AwsMock::Service {
         _host = _configuration.getString("awsmock.service.sqs.host", SQS_DEFAULT_HOST);
         _maxQueueLength = _configuration.getInt("awsmock.service.sqs.max.queue", 250);
         _maxThreads = _configuration.getInt("awsmock.service.sqs.max.threads", 50);
-        _logger.debug() << "SQS rest service initialized, endpoint: " << _host << ":" << _port << std::endl;
+        log_debug_stream(_logger) << "SQS rest service initialized, endpoint: " << _host << ":" << _port << std::endl;
     }
 
     SQSServer::~SQSServer() {
         if(_httpServer) {
             _httpServer->stopAll(true);
             delete _httpServer;
-            _logger.information() << "SQS rest service stopped" << std::endl;
+            log_info_stream(_logger) << "SQS rest service stopped" << std::endl;
         }
     }
 
@@ -32,12 +32,12 @@ namespace AwsMock::Service {
         auto *httpServerParams = new Poco::Net::HTTPServerParams();
         httpServerParams->setMaxQueued(250);
         httpServerParams->setMaxThreads(50);
-        _logger.debug() << "HTTP server parameter set, maxQueue: " << _maxQueueLength << " maxThreads: " << _maxThreads << std::endl;
+        log_debug_stream(_logger) << "HTTP server parameter set, maxQueue: " << _maxQueueLength << " maxThreads: " << _maxThreads << std::endl;
 
         _httpServer =
             new Poco::Net::HTTPServer(new SQSRequestHandlerFactory(_configuration, _metricService), Poco::Net::ServerSocket(Poco::UInt16(_port)), httpServerParams);
 
         _httpServer->start();
-        _logger.information() << "SQS rest service started, endpoint: http://" << _host << ":" << _port << std::endl;
+        log_info_stream(_logger) << "SQS rest service started, endpoint: http://" << _host << ":" << _port << std::endl;
     }
 }

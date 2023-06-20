@@ -6,12 +6,12 @@
 #define AWSMOCK_CONTROLLER_RESTSERVICE_H
 
 // Poco includes
-#include "Poco/Logger.h"
 #include "Poco/Net/HTTPRequestHandlerFactory.h"
 #include "Poco/Net/HTTPServer.h"
 
 // AwsMock includes
 #include "awsmock/core/Logger.h"
+#include "awsmock/core/LogStream.h"
 #include "awsmock/core/Configuration.h"
 
 #define DEFAULT_PORT 4567
@@ -88,7 +88,7 @@ namespace AwsMock {
       /**
        * Logger
        */
-      Poco::Logger &_logger;
+      Core::LogStream _logger;
 
       /**
       * Logger
