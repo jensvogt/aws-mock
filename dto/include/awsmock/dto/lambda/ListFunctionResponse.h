@@ -214,7 +214,11 @@ namespace AwsMock::Dto::Lambda {
        *
        * @return JSON string
        */
-      [[nodiscard]] std::string ToJson() const {
+      [[nodiscard]] std::string ToJson() {
+
+          for(auto &lambda: lambdaList) {
+              functions.push_back({.functionArn=lambda.arn, .functionName=lambda.function, .handler=lambda.handler});
+          }
 
           try {
               Poco::JSON::Object rootJson;
@@ -222,9 +226,11 @@ namespace AwsMock::Dto::Lambda {
               for (const auto &function : functions) {
                   recordsJsonArray.add(function.ToJsonObject());
               }
+              rootJson.set("Functions", recordsJsonArray);
 
               std::ostringstream os;
               rootJson.stringify(os);
+              std::string temp = os.str();
               return os.str();
 
           } catch (Poco::Exception &exc) {
