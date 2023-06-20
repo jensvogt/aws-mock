@@ -22,8 +22,6 @@
 
 namespace AwsMock::Service {
 
-    using namespace Poco::Data::Keywords;
-
     class SQSServiceTest : public ::testing::Test {
 
     protected:

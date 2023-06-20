@@ -8,9 +8,6 @@
 // GTest includes
 #include <gtest/gtest.h>
 
-// Poco includes
-#include "Poco/Path.h"
-
 // AwsMock includes
 #include <awsmock/core/Configuration.h>
 #include <awsmock/core/AwsUtils.h>
@@ -29,8 +26,6 @@
 #define DLQ_ARN "arn:aws:sqs:eu-central-1:000000000000:" DLQ_NAME
 
 namespace AwsMock::Database {
-
-    using namespace Poco::Data::Keywords;
 
     class SQSDatabaseTest : public ::testing::Test {
 

@@ -25,8 +25,6 @@
 
 namespace AwsMock::Database {
 
-    using namespace Poco::Data::Keywords;
-
     class SNSDatabaseTest : public ::testing::Test {
 
     protected:
