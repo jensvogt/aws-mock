@@ -50,17 +50,17 @@ namespace AwsMock::Dto::Lambda {
       /**
        * Architectures
        */
-      std::vector<std::string> architectures;
+      std::vector<std::string> architectures = {};
 
       /**
        * SHA256 checksum
        */
-      std::string codeSha256;
+      std::string codeSha256 = {};
 
       /**
        * Code size
        */
-      long codeSize;
+      long codeSize = 0;
 
       /**
        * Dead letter config
@@ -70,7 +70,7 @@ namespace AwsMock::Dto::Lambda {
       /**
        * Description
        */
-      std::string description;
+      std::string description = {};
       // TODO: Environment, EpheremalStorage, FileSystemConfig
 
       /**
