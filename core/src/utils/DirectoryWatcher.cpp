@@ -28,6 +28,14 @@ namespace AwsMock::Core {
         _logger.debug() << "File _watcher initialized, path: " << _rootDir << std::endl;
     }
 
+    void DirectoryWatcher::Lock() {
+        _mutex.lock();
+    }
+
+    void DirectoryWatcher::Unlock() {
+        _mutex.unlock();
+    }
+
     [[noreturn]] void DirectoryWatcher::run() {
 
         int i, wd;
@@ -42,39 +50,41 @@ namespace AwsMock::Core {
             while (i < length) {
                 auto *event = (struct inotify_event *) &buffer[i];
                 if (event->len) {
-                    if (event->mask & IN_CREATE) {
-                        std::string rootDir = _watcherMap[event->wd];
-                        std::string fileName = GetFilename(rootDir, event->name);
-                        if (event->mask & IN_ISDIR) {
-                            wd = inotify_add_watch(fd, fileName.c_str(), IN_CREATE | IN_MODIFY | IN_DELETE);
-                            _watcherMap[wd] = fileName;
-                        }
-                        Poco::File f(fileName);
-                        DirectoryEvent ev(f, DW_ITEM_ADDED);
-                        this->itemAdded(this, ev);
-                    }
-
-                    if (event->mask & IN_MODIFY) {
-                        std::string rootDir = _watcherMap[event->wd];
-                        std::string fileName = GetFilename(rootDir, event->name);
-                        Poco::File f(fileName);
-                        DirectoryEvent ev(f, DW_ITEM_MODIFIED);
-                        this->itemModified(this, ev);
-                    }
-
-                    if (event->mask & IN_DELETE) {
-                        if (event->mask & IN_ISDIR) {
-                            auto it = _watcherMap.find(event->wd);
-                            if (it != _watcherMap.end()) {
-                                _watcherMap.erase(it);
+                    if (_mutex.tryLock()) {
+                        if (event->mask & IN_CREATE) {
+                            std::string rootDir = _watcherMap[event->wd];
+                            std::string fileName = GetFilename(rootDir, event->name);
+                            if (event->mask & IN_ISDIR) {
+                                wd = inotify_add_watch(fd, fileName.c_str(), IN_CREATE | IN_MODIFY | IN_DELETE);
+                                _watcherMap[wd] = fileName;
                             }
-                            inotify_rm_watch(fd, event->wd);
+                            Poco::File f(fileName);
+                            DirectoryEvent ev(f, DW_ITEM_ADDED);
+                            this->itemAdded(this, ev);
                         }
-                        std::string rootDir = _watcherMap[event->wd];
-                        std::string fileName = GetFilename(rootDir, event->name);
-                        Poco::File f(fileName);
-                        DirectoryEvent ev(f, DW_ITEM_REMOVED);
-                        this->itemDeleted(this, ev);
+
+                        if (event->mask & IN_MODIFY) {
+                            std::string rootDir = _watcherMap[event->wd];
+                            std::string fileName = GetFilename(rootDir, event->name);
+                            Poco::File f(fileName);
+                            DirectoryEvent ev(f, DW_ITEM_MODIFIED);
+                            this->itemModified(this, ev);
+                        }
+
+                        if (event->mask & IN_DELETE) {
+                            if (event->mask & IN_ISDIR) {
+                                auto it = _watcherMap.find(event->wd);
+                                if (it != _watcherMap.end()) {
+                                    _watcherMap.erase(it);
+                                }
+                                inotify_rm_watch(fd, event->wd);
+                            }
+                            std::string rootDir = _watcherMap[event->wd];
+                            std::string fileName = GetFilename(rootDir, event->name);
+                            Poco::File f(fileName);
+                            DirectoryEvent ev(f, DW_ITEM_REMOVED);
+                            this->itemDeleted(this, ev);
+                        }
                     }
                 }
                 i += (int)EVENT_SIZE + event->len;

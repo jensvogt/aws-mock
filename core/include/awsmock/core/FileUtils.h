@@ -15,6 +15,7 @@
 #include <cstdio>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 // Poco includes
 #include "Poco/Path.h"
@@ -30,6 +31,7 @@
 #include "Poco/RegularExpression.h"
 
 // AwsMock includes
+#include "awsmock/core/DirUtils.h"
 #include "awsmock/core/StringUtils.h"
 
 namespace AwsMock::Core {
@@ -54,6 +56,14 @@ namespace AwsMock::Core {
        * @return file extension in lower case letters
        */
       static std::string GetExtension(const std::string &fileName);
+
+      /**
+       * Returns the parent directory name.
+       *
+       * @param fileName name fo the file
+       * @return parent directory name
+       */
+      static std::string GetParentPath(const std::string &fileName);
 
       /**
        * Check whether the file has the given pattern
@@ -132,6 +142,15 @@ namespace AwsMock::Core {
        * @return size of the in bytes.
        */
       static long FileSize(const std::string &fileName);
+
+      /**
+       * Moves a file to a new directory.
+       *
+       * @param sourceFileName name of the source file.
+       * @param targetFileName name of the target file.
+       * @param createDir if true, create directory tree if it does not exist.
+       */
+      static void MoveTo(const std::string &sourceFileName, const std::string &targetFileName, bool createDir = true);
 
       /**
        * Append several binary files to a single output file.

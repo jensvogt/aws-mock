@@ -23,18 +23,20 @@
 // C standard includes
 #include <sys/inotify.h>
 #include <unistd.h>
-#include <utility>
 
 // C++ standard includes
 #include <string>
 #include <map>
 #include <iostream>
+#include <utility>
 
 // Poco includes
 #include <Poco/BasicEvent.h>
 #include <Poco/File.h>
 #include <Poco/Logger.h>
 #include <Poco/LogStream.h>
+#include <Poco/Mutex.h>
+#include <Poco/Thread.h>
 #include <Poco/Runnable.h>
 #include <Poco/Delegate.h>
 #include <Poco/DirectoryIterator.h>
@@ -112,6 +114,20 @@ namespace AwsMock::Core {
       [[noreturn]] void run() override;
 
       /**
+       * Lock the watcher.
+       *
+       * <p>Only when the lock is released the watcher escalates the events and calls the callbacks.</p>
+       */
+      void Lock();
+
+      /**
+       * Unlock the watcher.
+       *
+       * <p>Only in unlocked state the watcher events arse escalated.</p>
+       */
+      void Unlock();
+
+      /**
        * Added event
        */
       Poco::BasicEvent<const DirectoryEvent> itemAdded;
@@ -156,6 +172,10 @@ namespace AwsMock::Core {
        */
       std::map<int, std::string> _watcherMap;
 
+      /**
+       * Locking mechanism
+       */
+      Poco::Mutex _mutex;
     };
 
 } // namespace AwsMock::Core

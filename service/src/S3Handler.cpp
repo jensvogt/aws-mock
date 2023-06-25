@@ -69,10 +69,9 @@ namespace AwsMock::Service {
 
     void S3Handler::handlePut(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response, [[maybe_unused]]const std::string &region, [[maybe_unused]]const std::string &user) {
         Core::MetricServiceTimer measure(_metricService, HTTP_PUT_TIMER);
-        log_debug_stream(_logger) << "S3 PUT request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl << std::endl;
+        log_debug_stream(_logger) << "S3 PUT request, URI: " << request.getURI() << " region: " << region << " user: " << user << std::endl;
 
         try {
-
             std::string bucket, key;
             GetBucketKeyFromUri(request.getURI(), bucket, key);
             log_debug_stream(_logger) << "Found bucket/key, bucket: " << bucket << " key: " << key << std::endl << std::endl;
@@ -118,6 +117,9 @@ namespace AwsMock::Service {
                 putObjectRequest.contentType = request.get("Content-Type");
                 putObjectRequest.md5Sum = request.get("Content-MD5");
                 putObjectRequest.size = std::stol(request.get("Content-Length"));
+
+                // Set the write file = true, as the file is coming over the REST interface and not from the file watcher.
+                putObjectRequest.writeFile = request.get("WriteFile") == "true";
 
                 Dto::S3::PutObjectResponse putObjectResponse = _s3Service.PutObject(putObjectRequest, &request.stream());
 
@@ -250,7 +252,7 @@ namespace AwsMock::Service {
     void S3Handler::GetBucketKeyFromUri(const std::string &uri, std::string &bucket, std::string &key) {
 
         Poco::RegularExpression::MatchVec posVec;
-        Poco::RegularExpression pattern(R"(/([a-z0-9-.]+)?/?([a-zA-Z0-9-_/.*'()]+)?\??.*$)");
+        Poco::RegularExpression pattern(R"(/([a-zA-Z0-9-.]+)?/?([a-zA-Z0-9-_/.*'()]+)?\??.*$)");
         if (!pattern.match(uri, 0, posVec)) {
             log_error_stream(_logger) << "Could not get bucket/key from URI, uri: " << uri << std::endl;
             throw Core::ResourceNotFoundException("Could not extract bucket/key from URI");

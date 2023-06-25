@@ -23,7 +23,7 @@
 #include <awsmock/core/CryptoUtils.h>
 #include <awsmock/core/DirUtils.h>
 #include <awsmock/core/DirectoryWatcher.h>
-#include <awsmock/core/Logger.h>
+#include <awsmock/core/LogStream.h>
 #include <awsmock/db/ServiceDatabase.h>
 #include <awsmock/dto/s3/PutObjectRequest.h>
 #include <awsmock/service/S3Service.h>
@@ -87,9 +87,20 @@ namespace AwsMock::Worker {
       void GetBucketKeyFromFile(const std::string &fileName, std::string &bucket, std::string &key);
 
       /**
+       * Sends a put object request to the S3 service
+       *
+       * @param bucket S3 bucket name
+       * @param key S3 object key
+       * @param md5Sum MD5 hash
+       * @param contentType content type
+       * @param fileSize size of the file
+       */
+      void SendPutObjectRequest(const std::string &bucket, const std::string &key, const std::string &md5Sum, const std::string &contentType, long fileSize);
+
+      /**
        * Logger
        */
-      Poco::LogStream _logger;
+      Core::LogStream _logger;
 
       /**
        * Configuration
@@ -107,9 +118,14 @@ namespace AwsMock::Worker {
       std::unique_ptr<Service::S3Service> _s3Service;
 
       /**
-       * Data dir
+       * Data directory
        */
       std::string _dataDir;
+
+      /**
+       * Watcher directory
+       */
+      std::string _watcherDir;
 
       /**
        * Directory _watcher thread
@@ -135,6 +151,16 @@ namespace AwsMock::Worker {
        * Sleeping period in ms
        */
       bool _period;
+
+      /**
+       * S3 service host
+       */
+      std::string _s3ServiceHost;
+
+      /**
+       * S3 service port
+       */
+      int _s3ServicePort;
     };
 
 } // namespace AwsMock::Worker

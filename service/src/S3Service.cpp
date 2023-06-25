@@ -13,6 +13,7 @@ namespace AwsMock::Service {
 
         // Initialize environment
         _dataDir = _configuration.getString("awsmock.data.dir", "/tmp/awsmock/data");
+        _watcherDir = _dataDir + Poco::Path::separator() + "watcher";
         _tempDir = _dataDir + Poco::Path::separator() + "tmp";
         _database = std::make_unique<Database::S3Database>(_configuration);
 
@@ -47,6 +48,12 @@ namespace AwsMock::Service {
             std::string bucketDir = _dataDir + Poco::Path::separator() + "s3" + Poco::Path::separator() + name;
             if (!Core::DirUtils::DirectoryExists(bucketDir)) {
                 Core::DirUtils::MakeDirectory(bucketDir);
+            }
+
+            // Create watcher directory
+            std::string watcherDir = _watcherDir + Poco::Path::separator() + name;
+            if (!Core::DirUtils::DirectoryExists(watcherDir)) {
+                Core::DirUtils::MakeDirectory(watcherDir);
             }
 
             // Update database
@@ -207,7 +214,7 @@ namespace AwsMock::Service {
         log_trace_stream(_logger) << "Got file metadata, md5sum: " << md5sum << " size: " << fileSize << " outFile: " << outFile << std::endl;
 
         // Create database object
-        Database::Entity::S3::Object object = _database->CreateOrUpdateObject({.bucket=bucket, .key=key, .owner=user, .size=fileSize, .md5sum=md5sum});
+        Database::Entity::S3::Object object = _database->CreateOrUpdateObject({.region=region, .bucket=bucket, .key=key, .owner=user, .size=fileSize, .md5sum=md5sum});
 
         // Cleanup
         Core::DirUtils::DeleteDirectory(uploadDir);
@@ -234,7 +241,7 @@ namespace AwsMock::Service {
             }
 
             // Write file
-            if (stream) {
+            if (request.writeFile && stream) {
                 std::string fileName = GetFilename(request.bucket, request.key);
                 std::ofstream ofs(fileName);
                 ofs << stream->rdbuf();
@@ -243,6 +250,7 @@ namespace AwsMock::Service {
 
             // Update database
             Database::Entity::S3::Object object = {
+                .region=request.region,
                 .bucket=request.bucket,
                 .key=request.key,
                 .owner=request.owner,
@@ -250,6 +258,7 @@ namespace AwsMock::Service {
                 .md5sum=request.md5Sum,
                 .contentType=request.contentType};
             object = _database->CreateOrUpdateObject(object);
+            log_debug_stream(_logger) << "Database updated, bucket: " << request.bucket << " key: " << request.key << std::endl;
 
             // Check notification
             Database::Entity::S3::Bucket bucket = _database->GetBucketByRegionName(request.region, request.bucket);
@@ -473,9 +482,16 @@ namespace AwsMock::Service {
 
     void S3Service::DeleteBucket(const std::string &bucket) {
 
-        std::string dirname = _dataDir + Poco::Path::separator() + "s3" + Poco::Path::separator() + bucket;
-        if (Core::DirUtils::DirectoryExists(dirname)) {
-            Core::DirUtils::DeleteDirectory(dirname, true);
+        std::string bucketDir = _dataDir + Poco::Path::separator() + "s3" + Poco::Path::separator() + bucket;
+        if (Core::DirUtils::DirectoryExists(bucketDir)) {
+            Core::DirUtils::DeleteDirectory(bucketDir, true);
+            log_debug_stream(_logger) << "Bucket directory deleted, bucketDir: " + bucketDir << std::endl;
+        }
+
+        std::string wacherDir = _watcherDir + Poco::Path::separator() + bucket;
+        if (Core::DirUtils::DirectoryExists(wacherDir)) {
+            Core::DirUtils::DeleteDirectory(wacherDir, true);
+            log_debug_stream(_logger) << "Watcher directory deleted, wacherDir: " + wacherDir << std::endl;
         }
     }
 

@@ -46,6 +46,11 @@ namespace AwsMock::Core {
         return DirectoryCountFiles(dirName) == 0;
     }
 
+    bool DirUtils::IsDirectory(const std::string &dirName) {
+        Poco::File file(dirName);
+        return file.isDirectory();
+    }
+
     void DirUtils::MakeDirectory(const std::string &dirName, bool recursive) {
         Poco::File file(dirName);
         if (recursive) {

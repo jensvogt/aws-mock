@@ -90,6 +90,14 @@ namespace AwsMock::Core {
       static void MakeDirectory(const std::string &dirName, bool recursive = true);
 
       /**
+       * Checks whether the given file name is a directory.
+       *
+       * @param dirName name of the directory.
+       * @return true if the supplied file name is actually a directory.
+       */
+      static bool IsDirectory(const std::string &dirName);
+
+      /**
        * Get list of files
        *
        * @param dirName name of the directory

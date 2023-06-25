@@ -49,6 +49,13 @@ namespace AwsMock::Dto::S3 {
       std::string owner;
 
       /**
+       * Write file
+       *
+       * <p>Indicates that the file is part of the body.</p>
+       */
+      bool writeFile = true;
+
+      /**
        * Converts the DTO to a string representation.
        *
        * @return DTO as string for logging.

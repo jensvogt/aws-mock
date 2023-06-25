@@ -1,4 +1,5 @@
 #include "awsmock/core/FileUtils.h"
+#include "awsmock/core/ResourceNotFoundException.h"
 
 namespace AwsMock::Core {
 
@@ -26,9 +27,25 @@ namespace AwsMock::Core {
             + Poco::replace(Poco::toLower(Poco::Path::temp() + Poco::UUIDGenerator().createRandom().toString() + "." + extension), "-", "");
     }
 
+    std::string FileUtils::GetParentPath(const std::string &fileName) {
+        std::filesystem::path path(fileName);
+        return path.parent_path();
+    }
+
     long FileUtils::FileSize(const std::string &fileName) {
         Poco::File file(fileName);
         return (long)file.getSize();
+    }
+
+    void FileUtils::MoveTo(const std::string &sourceFileName, const std::string &targetFileName, bool createDir) {
+        Poco::File sourceFile(sourceFileName);
+        Poco::File targetFile(targetFileName);
+        std::string parentPath = GetParentPath(targetFileName);
+        if(createDir && !Core::DirUtils::DirectoryExists(parentPath)) {
+            Poco::File parentFile(parentPath);
+            parentFile.createDirectories();
+        }
+        sourceFile.renameTo(targetFileName);
     }
 
     void FileUtils::AppendBinaryFiles(const std::string &outFile, const std::string &inDir, const std::vector<std::string> &files) {

@@ -136,6 +136,40 @@ namespace AwsMock::Core {
         EXPECT_TRUE(added == 1);
     }
 
+    TEST_F(DirectoryWatcherTest, DirectoryLockTest) {
+
+        // arrange
+        thread.start(*_watcher);
+        _watcher->Lock();
+
+        // act
+        Core::DirUtils::MakeDirectory(std::string(tempDir) + "/tmptest");
+
+        // assert
+        Poco::Thread::sleep(100);
+        EXPECT_TRUE(added == 0);
+    }
+
+    TEST_F(DirectoryWatcherTest, DirectoryUnlockTest) {
+
+        // arrange
+        thread.start(*_watcher);
+        _watcher->Lock();
+
+        // act
+        Core::DirUtils::MakeDirectory(std::string(tempDir) + "/tmptest");
+        Poco::Thread::sleep(200);
+        EXPECT_TRUE(added == 0);
+        _watcher->Unlock();
+        Core::DirUtils::MakeDirectory(std::string(tempDir) + "/tmptest1");
+
+        // assert
+        while (added == 0) {
+            Poco::Thread::sleep(100);
+        }
+        EXPECT_TRUE(added == 1);
+    }
+
 } // namespace AwsMock::Core
 
 #endif // AWSMOCK_CORE_DIRECTORYWATCHERTEST_H

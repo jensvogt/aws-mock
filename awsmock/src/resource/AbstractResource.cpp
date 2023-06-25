@@ -387,6 +387,7 @@ namespace AwsMock::Resource {
         request.set("Region", region);
         request.set("User", user);
         request.set("RequestId", Core::AwsUtils::GetRequestId());
+        request.set("WriteFile", "true");
     }
 
     void AbstractResource::DumpRequest(Poco::Net::HTTPServerRequest &request) {

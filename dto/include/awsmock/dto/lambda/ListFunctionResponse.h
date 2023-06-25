@@ -26,7 +26,7 @@ namespace AwsMock::Dto::Lambda {
       /**
        * Target ARN
        */
-      std::string targetArn;
+      std::string targetArn = {};
 
       /**
        * Converts the DTO to a JSON representation.
@@ -65,7 +65,7 @@ namespace AwsMock::Dto::Lambda {
       /**
        * Dead letter config
        */
-      DeadLetterConfig deadLetterConfig;
+      DeadLetterConfig deadLetterConfig = {};
 
       /**
        * Description
@@ -76,71 +76,71 @@ namespace AwsMock::Dto::Lambda {
       /**
        * Function ARN
        */
-      std::string functionArn;
+      std::string functionArn = {};
 
       /**
        * Function name
        */
-      std::string functionName;
+      std::string functionName = {};
 
       /**
        * Function handler
        */
-      std::string handler;
+      std::string handler = {};
 
       // TODO: ImageConfigResponse
 
       /**
        * Last modification datetime
        */
-      Poco::DateTime lastModified;
+      Poco::DateTime lastModified = {};
 
       /**
        * Last update status
        */
-      std::string lastUpdateStatus;
+      std::string lastUpdateStatus = {};
 
       /**
        * Last update status reason
        */
-      std::string lastUpdateStatusReason;
+      std::string lastUpdateStatusReason = {};
 
       /**
        * Last update status reason
        */
-      std::string lastUpdateStatusReasonCode;
+      std::string lastUpdateStatusReasonCode = {};
 
       // TODO: Layers
 
       /**
        * State
        */
-      std::string state;
+      std::string state = {};
 
       /**
        * State reason
        */
-      std::string stateReason;
+      std::string stateReason = {};
 
       /**
        * State reason code
        */
-      std::string stateReasonCode;
+      std::string stateReasonCode = {};
 
       /**
        * Timeout
        */
-      int timeout;
+      int timeout = 15;
 
       /**
        * Version
        */
-      std::string version;
+      std::string version = {};
 
       /**
        * Environment
        */
-      EnvironmentVariables environment;
+      EnvironmentVariables environment = {};
 
       /**
        * Converts the DTO to a JSON representation.
@@ -151,11 +151,14 @@ namespace AwsMock::Dto::Lambda {
 
           try {
               Poco::JSON::Object rootJson;
+
+              // Architectures array
               Poco::JSON::Array architectureArray;
-              for (const auto &archituecture : architectures) {
-                  architectureArray.add(archituecture);
+              for (const auto &architecture : architectures) {
+                  architectureArray.add(architecture);
               }
               rootJson.set("Architectures", architectureArray);
+
               rootJson.set("CodeSha256", codeSha256);
               rootJson.set("CodeSize", codeSize);
               rootJson.set("DeadLetterConfig", deadLetterConfig.ToJsonObject());
@@ -172,7 +175,9 @@ namespace AwsMock::Dto::Lambda {
               rootJson.set("State", state);
               rootJson.set("StateResaon", stateReason);
               rootJson.set("StateReasonCode", stateReasonCode);
+              rootJson.set("Timeout", timeout);
               rootJson.set("Environment", environment.ToJson());
+              rootJson.set("Version", version);
 
               return rootJson;
 

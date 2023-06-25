@@ -274,6 +274,11 @@ namespace AwsMock::Service {
       std::string _dataDir;
 
       /**
+       * Watcher directory
+       */
+      std::string _watcherDir;
+
+      /**
        * Temp directory
        */
       std::string _tempDir;
