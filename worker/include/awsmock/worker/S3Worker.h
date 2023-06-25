@@ -78,6 +78,20 @@ namespace AwsMock::Worker {
       void OnFileDeleted(const Core::DirectoryEvent &deleteEvent);
 
       /**
+       * Create a new bucket, by sending the corresponding CreateBucket request to the S3 service.
+       *
+       * @param dirPath absolute path of the directory
+       */
+      void CreateBucket(const std::string &dirPath);
+
+      /**
+       * Create a new object, by sending the corresponding PutObject request to the S3 service.
+       *
+       * @param filePath absolute path of the file
+       */
+      void CreateObject(const std::string &filePath);
+
+      /**
        * Gets the bucket and object key from the file name.
        *
        * @param fileName absolute file file name
@@ -85,6 +99,14 @@ namespace AwsMock::Worker {
        * @param key object key
        */
       void GetBucketKeyFromFile(const std::string &fileName, std::string &bucket, std::string &key);
+
+      /**
+       * Sends a put object request to the S3 service
+       *
+       * @param bucket S3 bucket name
+       * @param contentType content type
+       */
+      void SendCreateBucketRequest(const std::string &bucket, const std::string &contentType);
 
       /**
        * Sends a put object request to the S3 service

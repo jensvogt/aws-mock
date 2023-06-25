@@ -75,30 +75,17 @@ namespace AwsMock::Worker {
     void S3Worker::OnFileAdded(const Core::DirectoryEvent &addedEvent) {
         _logger.debug() << "Added path: " << addedEvent.item.path() << std::endl;
 
-        if(Core::DirUtils::IsDirectory(addedEvent.item.path())) {
-            // TODO: Create bucket
-            return;
+        if (Core::DirUtils::IsDirectory(addedEvent.item.path())) {
+            CreateBucket(addedEvent.item.path());
+        } else {
+            CreateObject(addedEvent.item.path());
         }
-
-        // Get bucket, key
-        std::string bucket, key;
-        GetBucketKeyFromFile(addedEvent.item.path(), bucket, key);
-
-        // Get file size, MD5 sum
-        long size = Core::FileUtils::FileSize(addedEvent.item.path());
-        std::string md5sum = Core::Crypto::GetMd5FromFile(addedEvent.item.path());
-        std::string owner = Core::FileUtils::GetOwner(addedEvent.item.path());
-
-        Core::FileUtils::MoveTo(addedEvent.item.path(), _dataDir + Poco::Path::separator() + bucket + Poco::Path::separator() + key, true);
-
-        SendPutObjectRequest(bucket, key, md5sum, "application/octet-stream", size);
     }
 
     void S3Worker::OnFileModified(const Core::DirectoryEvent &modifiedEvent) {
         _logger.debug() << "Changed path: " << modifiedEvent.item.path() << std::endl;
 
         if(Core::DirUtils::IsDirectory(modifiedEvent.item.path())) {
-            // TODO: Create bucket
             return;
         }
 
@@ -111,12 +98,16 @@ namespace AwsMock::Worker {
         std::string md5sum = Core::Crypto::GetMd5FromFile(modifiedEvent.item.path());
         std::string owner = Core::FileUtils::GetOwner(modifiedEvent.item.path());
 
-        //SendPutObjectRequest(bucket, key, md5sum, "application/octet-stream", size);
+        SendPutObjectRequest(bucket, key, md5sum, "application/octet-stream", size);
     }
 
     void S3Worker::OnFileDeleted(const Core::DirectoryEvent &deleteEvent) {
         _logger.debug() << "Deleted path: " << deleteEvent.item.path() << std::endl;
 
+        if (Core::DirUtils::IsDirectory(deleteEvent.item.path())) {
+            // TODO: Delete bucket
+            return;
+        }
         std::string bucketName, key;
         GetBucketKeyFromFile(deleteEvent.item.path(), bucketName, key);
 
@@ -150,6 +141,65 @@ namespace AwsMock::Worker {
         }
     }
 
+    void S3Worker::CreateBucket(const std::string &dirPath) {
+
+        // Get bucket, key
+        std::string bucket, key;
+        GetBucketKeyFromFile(dirPath, bucket, key);
+
+        // Set parameter
+        std::string owner = Core::FileUtils::GetOwner(dirPath);
+
+        SendCreateBucketRequest(bucket, "application/octet-stream");
+    }
+
+    void S3Worker::CreateObject(const std::string &filePath) {
+
+        // Get bucket, key
+        std::string bucket, key;
+        GetBucketKeyFromFile(filePath, bucket, key);
+
+        // Get file size, MD5 sum
+        long size = Core::FileUtils::FileSize(filePath);
+        std::string md5sum = Core::Crypto::GetMd5FromFile(filePath);
+        std::string owner = Core::FileUtils::GetOwner(filePath);
+
+        Core::FileUtils::MoveTo(filePath, _dataDir + Poco::Path::separator() + bucket + Poco::Path::separator() + key, true);
+
+        SendPutObjectRequest(bucket, key, md5sum, "application/octet-stream", size);
+    }
+
+    void S3Worker::SendCreateBucketRequest(const std::string &bucket, const std::string &contentType) {
+
+        //"Credential=none/20230618/eu-central-1/s3/aws4_request, SignedHeaders=content-md5;content-type;host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=fe9766ea2c032ac7b17033a567f6b361192bddcf73f89d25c15019977c544e1c"
+        Poco::URI uri("http://" + _s3ServiceHost + ":" + std::to_string(_s3ServicePort) + "/" + bucket);
+        std::string path(uri.getPathAndQuery());
+
+        // Get the body
+        std::string body = std::string(
+            "<CreateBucketConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\">\n<LocationConstraint>" + bucket
+                + "</LocationConstraint>\n</CreateBucketConfiguration>");
+
+        // Create HTTP request and set headers
+        Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
+        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_PUT, path, Poco::Net::HTTPMessage::HTTP_1_1);
+        request.add("Content-Type", contentType);
+        request.add("Authorization",
+                    "AWS4-HMAC-SHA256 Credential=none/20230618/eu-central-1/lambda/aws4_request, SignedHeaders=host;x-amz-date;x-amz-security-token, Signature=90d0e45560fa4ce03e6454b7a7f2a949e0c98b46c35bccb47f666272ec572840");
+        log_debug_stream(_logger) << "S3 create bucket message request created, bucket: " + bucket << std::endl;
+
+        // Send request
+        std::ostream &os = session.sendRequest(request);
+        os << body;
+
+        // Get the response status
+        Poco::Net::HTTPResponse response;
+        if (response.getStatus() != Poco::Net::HTTPResponse::HTTP_OK) {
+            log_error_stream(_logger) << "HTTP error, status: " + std::to_string(response.getStatus()) + " reason: " + response.getReason() << std::endl;
+        }
+        log_debug_stream(_logger) << "S3 create bucket message request send, status: " << response.getStatus() << std::endl;
+    }
+
     void S3Worker::SendPutObjectRequest(const std::string &bucket, const std::string &key, const std::string &md5Sum, const std::string &contentType, long fileSize) {
 
         //"Credential=none/20230618/eu-central-1/s3/aws4_request, SignedHeaders=content-md5;content-type;host;x-amz-content-sha256;x-amz-date;x-amz-security-token, Signature=fe9766ea2c032ac7b17033a567f6b361192bddcf73f89d25c15019977c544e1c"
@@ -168,7 +218,7 @@ namespace AwsMock::Worker {
         log_debug_stream(_logger) << "S3 put object message request created, bucket: " + bucket << " key: " << key << std::endl;
 
         // Send request
-        std::ostream &os = session.sendRequest(request);
+        session.sendRequest(request);
 
         // Get the response status
         Poco::Net::HTTPResponse response;

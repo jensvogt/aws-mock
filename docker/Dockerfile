@@ -55,7 +55,7 @@ RUN cd /usr/src && \
 
 FROM debian:bookworm-slim
 
-RUN apt-get update && apt-get -y install openssl supervisor libarchive13 zlib1g
+RUN apt-get update && apt-get -y install openssl supervisor libarchive13 zlib1
 
 COPY --from=build /usr/src/aws-mock/etc/aws-mock.properties /etc
 COPY --from=build /usr/bin/aws-mock /usr/bin
