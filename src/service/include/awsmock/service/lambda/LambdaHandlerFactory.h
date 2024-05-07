@@ -10,9 +10,9 @@
 #include <Poco/NotificationQueue.h>
 
 // AwsMock includes
-#include <LambdaHandler.h>
 #include <awsmock/core/Configuration.h>
 #include <awsmock/core/MetricService.h>
+#include <awsmock/service/lambda/LambdaHandler.h>
 
 namespace AwsMock::Service {
 

@@ -5,6 +5,9 @@
 #ifndef AWSMOCK_CORE_THREAD_POOL_H
 #define AWSMOCK_CORE_THREAD_POOL_H
 
+// Poco includes
+#include <Poco/ThreadPool.h>
+
 // AwsMock includes
 #include <awsmock/core/Configuration.h>
 #include <awsmock/core/LogStream.h>
