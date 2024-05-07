@@ -9,10 +9,10 @@
 #include <string>
 
 // AwsMock includes
-#include <awsmock/dto/lambda/model/InvocationNotification.h>
 #include <awsmock/core/Configuration.h>
 #include <awsmock/core/LogStream.h>
 #include <awsmock/core/MetricService.h>
+#include <awsmock/dto/lambda/model/InvocationNotification.h>
 #include <awsmock/repository/LambdaDatabase.h>
 #include <awsmock/repository/ModuleDatabase.h>
 #include <awsmock/service/common/AbstractServer.h>

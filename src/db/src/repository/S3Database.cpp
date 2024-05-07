@@ -570,26 +570,25 @@ namespace AwsMock::Database {
 
                 auto client = GetClient();
                 mongocxx::collection _objectCollection = (*client)[_databaseName][_objectCollectionName];
-                
+
                 long count = 0;
                 if (region.empty() && bucket.empty()) {
-                    
-                        count = static_cast<long>(_objectCollection.count_documents({}));
-                
-               } else if (!region.empty() && bucket.empty()) {
 
-                   count = static_cast<long>(_objectCollection.count_documents(make_document(kvp("region", region))));
-               
-               } else if (region.empty() && !bucket.empty()) {
+                    count = static_cast<long>(_objectCollection.count_documents({}));
 
-                   count = static_cast<long>(_objectCollection.count_documents(make_document(kvp("bucket", bucket))));
+                } else if (!region.empty() && bucket.empty()) {
 
-               } else {
+                    count = static_cast<long>(_objectCollection.count_documents(make_document(kvp("region", region))));
 
-                   count = static_cast<long>(_objectCollection.count_documents(make_document(kvp("region", region), kvp("bucket", bucket))));
+                } else if (region.empty() && !bucket.empty()) {
 
-               }
-                 
+                    count = static_cast<long>(_objectCollection.count_documents(make_document(kvp("bucket", bucket))));
+
+                } else {
+
+                    count = static_cast<long>(_objectCollection.count_documents(make_document(kvp("region", region), kvp("bucket", bucket))));
+                }
+
                 log_trace << "Object count: " << count;
                 return count;
 

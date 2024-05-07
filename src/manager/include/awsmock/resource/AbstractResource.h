@@ -13,13 +13,13 @@
 #include <Poco/DateTime.h>
 #include <Poco/DateTimeFormat.h>
 #include <Poco/DateTimeFormatter.h>
+#include <Poco/Net/HTTPClientSession.h>
 #include <Poco/Net/HTTPRequestHandler.h>
 #include <Poco/Net/HTTPServerRequest.h>
 #include <Poco/Net/HTTPServerResponse.h>
+#include <Poco/RegularExpression.h>
 #include <Poco/StreamCopier.h>
 #include <Poco/URI.h>
-#include <Poco/Net/HTTPClientSession.h>
-#include <Poco/RegularExpression.h>
 
 // AwsMock includes
 #include <awsmock/core/AwsUtils.h>

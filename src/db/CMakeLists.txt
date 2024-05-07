@@ -32,14 +32,14 @@ set(SOURCES src/repository/Database.cpp src/utils/TestUtils.cpp ${SQS_SOURCES} $
 
 # Test directory
 if (NOT WIN32)
-add_subdirectory(tst)
-endif()
+    add_subdirectory(tst)
+endif ()
 
 # Includes
-if(WIN32)
+if (WIN32)
     include_directories(./include ../core/include ${AWSMOCK_WIN32_DIR}/include)
     link_directories(../core/${CMAKE_BUILD_TYPE} ${AWSMOCK_WIN32_DIR}/lib)
-else()
+else ()
     include_directories(include ../core/include /usr/include /usr/include/mongo /usr/include/bsoncxx/v_noabi /usr/include/mongocxx/v_noabi)
 endif ()
 

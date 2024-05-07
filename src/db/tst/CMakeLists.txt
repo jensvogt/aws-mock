@@ -21,7 +21,7 @@ if (WIN32)
     link_directories(../ ../../core ${AWSMOCK_WIN32_DIR}/poco/lib)
     link_directories(${AWSMOCK_WIN32_DIR}/mongo-cxx-driver/lib)
 else ()
-    include_directories(include ../core/include /usr/include /usr/include/mongo /usr/include/bsoncxx/v_noabi /usr/include/mongocxx/v_noabi)
+    include_directories(../include ../../core/include /usr/include /usr/include/mongo /usr/include/bsoncxx/v_noabi /usr/include/mongocxx/v_noabi)
     link_directories(/usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib ../ ../../core)
 endif ()
 

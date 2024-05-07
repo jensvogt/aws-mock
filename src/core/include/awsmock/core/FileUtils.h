@@ -16,7 +16,7 @@
 #else
 #include "accctrl.h"
 #include "aclapi.h"
-#include <cstdio>
+#include <stdio.h>
 #include <tchar.h>
 #include <windows.h>
 #endif
@@ -43,6 +43,7 @@
 #include <Poco/Path.h>
 #include <Poco/RegularExpression.h>
 #include <Poco/StreamCopier.h>
+#include <Poco/String.h>
 #include <Poco/UUIDGenerator.h>
 #include <Poco/Zip/Compress.h>
 #include <Poco/Zip/Decompress.h>

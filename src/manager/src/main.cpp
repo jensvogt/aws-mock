@@ -147,7 +147,7 @@ namespace AwsMock {
 
             } else if (name == "logfile") {
 
-               // _logger.setFileChannel(value);
+                // _logger.setFileChannel(value);
             }
         }
 

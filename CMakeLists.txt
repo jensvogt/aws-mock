@@ -10,7 +10,7 @@ if (NOT WIN32)
 else ()
     set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
     set(AWSMOCK_WIN32_DIR "D:\\work\\win32")
-#    set(CMAKE_CXX_FLAGS "/cgthreads8")
+    #    set(CMAKE_CXX_FLAGS "/cgthreads8")
 endif ()
 set(CMAKE_BUILD_PARALLEL_LEVEL 30)
 

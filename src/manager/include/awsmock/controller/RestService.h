@@ -52,7 +52,7 @@ namespace AwsMock {
          *
          * @param router HTTP request router.
          */
-        void setRouter(Poco::Net::HTTPRequestHandlerFactory* router);
+        void setRouter(Poco::Net::HTTPRequestHandlerFactory *router);
 
         /**
          * Start the restfull module.
@@ -67,7 +67,7 @@ namespace AwsMock {
          * @param router router to use
          * @param port port to use (default: 9100)
          */
-        void StartServer(Poco::Net::HTTPRequestHandlerFactory* router, int port = MANAGER_DEFAULT_PORT);
+        void StartServer(Poco::Net::HTTPRequestHandlerFactory *router, int port = MANAGER_DEFAULT_PORT);
 
         /**
          * Stop the manager
