@@ -16,7 +16,7 @@ namespace AwsMock::Dto::Docker {
             Poco::JSON::Parser parser;
             Poco::Dynamic::Var result = parser.parse(jsonString);
             Poco::JSON::Array::Ptr rootArray = result.extract<Poco::JSON::Array::Ptr>();
-            if (rootArray != nullptr) {
+            if (!rootArray.isNull()) {
                 for (const auto &it: *rootArray) {
                     Image image;
                     image.FromJson(it.extract<Poco::JSON::Object::Ptr>());

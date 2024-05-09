@@ -20,7 +20,7 @@ namespace AwsMock::Dto::Docker {
         try {
             // Names array
             Poco::JSON::Array::Ptr namesArray = object->getArray("Names");
-            if (namesArray != nullptr) {
+            if (!namesArray.isNull()) {
                 for (const auto &nt: *namesArray) {
                     names.push_back(nt.convert<std::string>());
                 }
@@ -28,7 +28,7 @@ namespace AwsMock::Dto::Docker {
 
             // Ports array
             Poco::JSON::Array::Ptr portsArray = object->getArray("Ports");
-            if (portsArray != nullptr) {
+            if (!portsArray.isNull()) {
                 for (const auto &p: *portsArray) {
                     ports.emplace_back(p.extract<Poco::JSON::Object::Ptr>());
                 }

@@ -18,7 +18,7 @@ namespace AwsMock::Dto::SQS {
             Core::JsonUtils::GetJsonValueString("QueueUrl", rootObject, queueUrl);
             Poco::JSON::Array::Ptr attributesArray = rootObject->getArray("AttributeNames");
 
-            if (attributesArray != nullptr) {
+            if (!attributesArray.isNull()) {
                 for (const auto &it: *attributesArray) {
                     if (!it.isEmpty()) {
                         attributeNames.emplace_back(it.extract<std::string>());

@@ -42,7 +42,7 @@ namespace AwsMock::Dto::Cognito {
 
             Poco::JSON::Array::Ptr attributesArray = rootObject->getArray("UserAttributes");
 
-            if (attributesArray != nullptr) {
+            if (!attributesArray.isNull()) {
                 for (const auto &it: *attributesArray) {
                     if (!it.isEmpty()) {
                         const auto &object = it.extract<Poco::JSON::Object::Ptr>();

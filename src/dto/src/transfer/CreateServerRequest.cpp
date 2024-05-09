@@ -35,7 +35,7 @@ namespace AwsMock::Dto::Transfer {
             // Protocols
             if (rootObject->has("Protocols")) {
                 Poco::JSON::Array::Ptr protocolsArray = rootObject->getArray("Protocols");
-                if (protocolsArray != nullptr) {
+                if (!protocolsArray.isNull()) {
                     for (const auto &protocol: *protocolsArray) {
                         protocols.push_back(protocol.convert<std::string>());
                     }

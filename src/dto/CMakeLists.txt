@@ -94,9 +94,11 @@ add_library(${LIBRARY} SHARED ${SOURCES})
 add_library(${LIBRARY_STATIC} STATIC ${SOURCES})
 set_target_properties(${LIBRARY_STATIC} PROPERTIES OUTPUT_NAME ${LIBRARY})
 
-if (WIN32)
-    target_link_libraries(${LIBRARY} awsmockcore.lib awsmockdb.lib libssl.lib libcrypto.lib libcurl_imp.lib archive.lib bson-1.0.lib
-            bsoncxx-v_noabi-rhb-x64-v143-md.lib mongocxx-v_noabi-rhb-x64-v143-md.lib)
+if (CYGWIN)
+    target_link_libraries(${LIBRARY} awsmockcore.lib awsmockdb.lib libssl.dll.a libcrypto.dll.a libcurl.dll.a
+            libarchive.dll.a bson-1.0.lib bsoncxx-v_noabi-rhb-x64-v143-md.lib mongocxx-v_noabi-rhb-x64-v143-md.lib
+            libPocoPrometheus.dll.a libPocoJSON.dll.a libPocoXML.dll.a libPocoNet.dll.a libPocoZip.dll.a
+            libPocoUtil.dll.a libPocoFoundation.dll.a)
 endif ()
 
 install(TARGETS ${LIBRARY} DESTINATION lib)

@@ -18,25 +18,22 @@ set(MONITORING_SOURCES src/monitoring/MetricService.cpp src/monitoring/MetricSys
 set(SOURCES ${UTILS_SOURCES} ${EXCEPTION_SOURCES} ${LOGGING_SOURCES} ${MONITORING_SOURCES})
 
 # Test directory
-if (NOT WIN32)
+if (NOT CYGWIN)
 add_subdirectory(tst)
 endif()
 
 # Includes
-
-if (WIN32)
-    include_directories(./include ${AWSMOCK_WIN32_DIR}/include)
-    link_directories(${AWSMOCK_WIN32_DIR}/lib)
-else ()
-    include_directories(./include)
-endif ()
+include_directories(./include)
 
 add_library(${LIBRARY} SHARED ${SOURCES})
 add_library(${LIBRARY_STATIC} STATIC ${SOURCES})
 set_target_properties(${LIBRARY_STATIC} PROPERTIES OUTPUT_NAME ${LIBRARY})
 
-if (WIN32)
-    target_link_libraries(${LIBRARY} libssl.lib libcrypto.lib libcurl_imp.lib archive.lib)
+if (CYGWIN)
+    link_directories(${LIBRARY} /usr/lib)
+    target_link_libraries(${LIBRARY} libssl.dll.a libcrypto.dll.a libcurl.dll.a libarchive.dll.a libiconv.dll.a
+            libPocoPrometheus.dll.a libPocoJSON.dll.a libPocoXML.dll.a libPocoNet.dll.a libPocoZip.dll.a
+            libPocoUtil.dll.a libPocoFoundation.dll.a)
 endif ()
 
 install(TARGETS ${LIBRARY} DESTINATION lib)

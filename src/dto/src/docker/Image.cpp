@@ -31,7 +31,7 @@ namespace AwsMock::Dto::Docker {
             Core::JsonUtils::GetJsonValueInt("Containers", jsonObject, containers);
 
             Poco::JSON::Array::Ptr reproTagsArray = jsonObject->getArray("RepoTags");
-            if (reproTagsArray != nullptr) {
+            if (!reproTagsArray.isNull()) {
                 for (const auto &nt: *reproTagsArray) {
                     repoTags.push_back(nt.convert<std::string>());
                 }
