@@ -35,24 +35,8 @@ namespace AwsMock {
 
         /**
          * Constructor
-         *
-         * @param configuration application configuration
          */
-        explicit RestService(Core::Configuration &configuration);
-
-        /**
-         * Sets the REST port.
-         *
-         * @param port REST port.
-         */
-        void setPort(int port);
-
-        /**
-         * Sets the REST URL router
-         *
-         * @param router HTTP request router.
-         */
-        void setRouter(Poco::Net::HTTPRequestHandlerFactory *router);
+        explicit RestService(const Poco::Net::HTTPRequestHandlerFactory& router);
 
         /**
          * Start the restfull module.
@@ -60,14 +44,6 @@ namespace AwsMock {
          * The router has to be defined before the HTTP manager is started.
          */
         void StartServer();
-
-        /**
-         * Start with port and router.
-         *
-         * @param router router to use
-         * @param port port to use (default: 9100)
-         */
-        void StartServer(Poco::Net::HTTPRequestHandlerFactory *router, int port = MANAGER_DEFAULT_PORT);
 
         /**
          * Stop the manager
@@ -87,14 +63,9 @@ namespace AwsMock {
         std::string _host;
 
         /**
-        * Logger
-        */
-        Core::Configuration &_configuration;
-
-        /**
          * REST router
          */
-        Poco::Net::HTTPRequestHandlerFactory *_router;
+        Poco::Net::HTTPRequestHandlerFactory& _router;
 
         /**
          * HTTP manager instance

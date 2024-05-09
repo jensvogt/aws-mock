@@ -19,8 +19,8 @@ set(SOURCES ${UTILS_SOURCES} ${EXCEPTION_SOURCES} ${LOGGING_SOURCES} ${MONITORIN
 
 # Test directory
 if (NOT CYGWIN)
-add_subdirectory(tst)
-endif()
+    add_subdirectory(tst)
+endif ()
 
 # Includes
 include_directories(./include)

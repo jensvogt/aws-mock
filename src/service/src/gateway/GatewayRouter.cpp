@@ -6,7 +6,7 @@
 
 namespace AwsMock::Service {
 
-    GatewayRouter::GatewayRouter(Core::Configuration &configuration, Core::MetricService &metricService) : _configuration(configuration), _metricService(metricService) {
+    GatewayRouter::GatewayRouter() {
 
         // Add routes
         _routingTable["s3"] = {._name = "s3", ._handlerType = HandlerType::S3};

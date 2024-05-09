@@ -30,7 +30,9 @@
 namespace AwsMock::Service {
 
     /**
-     * Gateway server
+     * @brief Gateway server
+     *
+     * All AwsMock HTTP request end here and will be routed to the corresponding handler.
      *
      * @author jens.vogt\@opitz-consulting.com
      */
@@ -40,11 +42,8 @@ namespace AwsMock::Service {
 
         /**
          * Constructor
-         *
-         * @param configuration aws-mock configuration
-         * @param metricService aws-mock monitoring
          */
-        explicit GatewayServer(Core::Configuration &configuration, Core::MetricService &metricService);
+        explicit GatewayServer();
 
         /**
          * Destructor
@@ -69,24 +68,9 @@ namespace AwsMock::Service {
       private:
 
         /**
-         * Configuration
-         */
-        Core::Configuration &_configuration;
-
-        /**
-         * Metric module
-         */
-        Core::MetricService &_metricService;
-
-        /**
          * Service database
          */
         std::unique_ptr<Database::ModuleDatabase> _serviceDatabase;
-
-        /**
-         * Running flag
-         */
-        bool _running;
 
         /**
          * AWS region
@@ -126,7 +110,7 @@ namespace AwsMock::Service {
         /**
          * Gateway router
          */
-        std::shared_ptr<Service::GatewayRouter> _router = std::make_shared<Service::GatewayRouter>(_configuration, _metricService);
+        std::shared_ptr<Service::GatewayRouter> _router = std::make_shared<Service::GatewayRouter>();
     };
 
 }// namespace AwsMock::Service

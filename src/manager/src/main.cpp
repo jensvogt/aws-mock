@@ -83,7 +83,7 @@ namespace AwsMock {
             log_debug << "Service stopped";
 
             // Stop HTTP manager
-            _restService.StopServer();
+            _restService->StopServer();
             log_debug << "Gateway stopped";
 
             // Shutdown monitoring
@@ -101,14 +101,21 @@ namespace AwsMock {
         [[maybe_unused]] void defineOptions(Poco::Util::OptionSet &options) override {
 
             Poco::Util::ServerApplication::defineOptions(options);
-            options.addOption(Poco::Util::Option("config", "", "set the configuration file").required(false).repeatable(false).argument("value").callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
-            options.addOption(
-                    Poco::Util::Option("loglevel", "", "set the log level").required(false).repeatable(false).argument("value").callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
-            options.addOption(
-                    Poco::Util::Option("logfile", "", "set the log file").required(false).repeatable(false).argument("value").callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
-            options.addOption(
-                    Poco::Util::Option("version", "", "display version information").required(false).repeatable(false).callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
-            options.addOption(Poco::Util::Option("help", "", "display help information").required(false).repeatable(false).callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
+            options.addOption(Poco::Util::Option("config", "", "set the configuration file", false, "value", true)
+                                      .repeatable(false)
+                                      .callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
+            options.addOption(Poco::Util::Option("loglevel", "", "set the log level", false, "value", true)
+                                      .repeatable(false)
+                                      .callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
+            options.addOption(Poco::Util::Option("logfile", "", "set the log file", false, "value", true)
+                                      .repeatable(false)
+                                      .callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
+            options.addOption(Poco::Util::Option("version", "", "display version information", false, "value", true)
+                                      .repeatable(false)
+                                      .callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
+            options.addOption(Poco::Util::Option("help", "", "display help information", false)
+                                      .repeatable(false)
+                                      .callback(Poco::Util::OptionCallback<AwsMockServer>(this, &AwsMockServer::handleOption)));
         }
 
         /**
@@ -131,18 +138,17 @@ namespace AwsMock {
 
             } else if (name == "config") {
 
-                _configuration.SetFilename(value);
+                Core::Configuration::instance().SetFilename(value);
 
             } else if (name == "version") {
 
-                std::cout << Core::Configuration::GetAppName() << " v" << Core::Configuration::GetVersion()
-                          << std::endl;
+                std::cout << Core::Configuration::GetAppName() << " v" << Core::Configuration::GetVersion() << std::endl;
                 exit(0);
 
             } else if (name == "loglevel") {
 
-                _configuration.setString("awsmock.log.level", value);
-                plog::get()->setMaxSeverity(plog::severityFromString(value.c_str()));
+                Core::Configuration::instance().setString("awsmock.log.level", value);
+                Core::LogStream::SetLevel(value);
                 _logLevelSet = true;
 
             } else if (name == "logfile") {
@@ -154,25 +160,30 @@ namespace AwsMock {
         /**
          * Initialize the configuration
          */
-        void IntializeConfig() {
-            _configuration.SetFilename(DEFAULT_CONFIG_FILE);
+        static void IntializeConfig() {
+            Core::Configuration::instance().SetFilename(DEFAULT_CONFIG_FILE);
         }
 
         /**
          * Initialize the logging
          */
-        void IntializeLogging() {
+        void IntializeLogging() const {
+            Core::LogStream logStream;
             if (!_logLevelSet) {
-                std::string logLevel = _configuration.getString("awsmock.log.level", DEFAULT_LOG_LEVEL);
-                plog::get()->setMaxSeverity(plog::severityFromString(logLevel.c_str()));
+                std::string logLevel = Core::Configuration::instance().getString("awsmock.log.level", DEFAULT_LOG_LEVEL);
+                Core::LogStream::SetLevel(logLevel);
             }
+#ifdef _WIN32
+            Core::LogStream::SetLogfile("./awsmock.log");
+#endif
         }
 
         /**
          * Initialize the Prometheus monitoring counters and StartServer the prometheus manager.
          */
-        void InitializeMonitoring() {
-            _metricService.Start();
+        static void InitializeMonitoring() {
+            Core::MetricService::instance().Start();
+            log_info << "Metric service started";
         }
 
         /**
@@ -195,9 +206,10 @@ namespace AwsMock {
 
         void StartServices() {
 
+            Core::Configuration &configuration = Core::Configuration::instance();
             Database::Entity::Module::ModuleList modules = _moduleDatabase.ListModules();
             for (const auto &module: modules) {
-                if (_configuration.has("awsmock.service." + module.name + ".active") && _configuration.getBool("awsmock.service." + module.name + ".active")) {
+                if (configuration.has("awsmock.service." + module.name + ".active") && configuration.getBool("awsmock.service." + module.name + ".active")) {
                     _moduleDatabase.SetStatus(module.name, Database::Entity::Module::ModuleStatus::ACTIVE);
                 }
             }
@@ -206,34 +218,34 @@ namespace AwsMock {
             // Get last module configuration
             for (const auto &module: modules) {
                 if (module.name == "s3" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::S3Server>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::S3Server>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "sqs" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::SQSServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::SQSServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "sns" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::SNSServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::SNSServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "lambda" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::LambdaServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::LambdaServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "transfer" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::TransferServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::TransferServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "cognito" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::CognitoServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::CognitoServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "dynamodb" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::DynamoDbServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::DynamoDbServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "kms" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::KMSServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::KMSServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "secretsmanager" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::SecretsManagerServer>(_configuration);
+                    _serverMap[module.name] = std::make_shared<Service::SecretsManagerServer>(configuration);
                     _serverMap[module.name]->Start();
                 } else if (module.name == "gateway" && module.status == Database::Entity::Module::ModuleStatus::ACTIVE) {
-                    _serverMap[module.name] = std::make_shared<Service::GatewayServer>(_configuration, _metricService);
+                    _serverMap[module.name] = std::make_shared<Service::GatewayServer>(configuration);
                     _serverMap[module.name]->Start();
                 }
                 log_debug << "Module " << module.name << " started";
@@ -267,8 +279,9 @@ namespace AwsMock {
             StartServices();
 
             // Start HTTP manager
-            _restService.setRouter(_router);
-            _restService.StartServer();
+            Controller::Router router = Controller::Router(_serverMap);
+            _restService = std::make_unique<RestService>(router);
+            _restService->StartServer();
 
             // Wait for termination
             this->waitForTerminationRequest();
@@ -282,17 +295,7 @@ namespace AwsMock {
         /**
          * Logger
          */
-        Core::LogStream _logger = Core::LogStream("info");
-
-        /**
-         * Application configuration
-         */
-        Core::Configuration &_configuration = Core::Configuration::instance();
-
-        /**
-         * Monitoring module
-         */
-        Core::MetricService &_metricService = Core::MetricService::instance();
+        std::unique_ptr<Core::LogStream> _logger = nullptr;
 
         /**
          * Service database
@@ -302,12 +305,12 @@ namespace AwsMock {
         /**
          * Gateway router
          */
-        Controller::Router *_router = new Controller::Router(_configuration, _metricService, _serverMap);
+        std::unique_ptr<Controller::Router> _router = nullptr;
 
         /**
          * Gateway controller
          */
-        RestService _restService = RestService(_configuration);
+        std::unique_ptr<RestService> _restService = nullptr;
 
         /**
          * Server map

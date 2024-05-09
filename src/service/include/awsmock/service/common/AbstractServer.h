@@ -38,11 +38,10 @@ namespace AwsMock::Service {
         /**
          * Constructor
          *
-         * @param configuration AwsMock configuration
          * @param name manager name
          * @param timeout run timeout in seconds
          */
-        explicit AbstractServer(Core::Configuration &configuration, std::string name, int timeout);
+        explicit AbstractServer(std::string name, int timeout);
 
         /**
          * Destructor

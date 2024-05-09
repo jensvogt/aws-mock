@@ -37,11 +37,9 @@ namespace AwsMock::Controller {
         /**
          * Constructor
          *
-         * @param configuration application configuration
-         * @param metricService common monitoring module
          * @param serverMap map of services
          */
-        Router(Core::Configuration &configuration, Core::MetricService &metricService, Service::ServerMap &serverMap);
+        explicit Router(Service::ServerMap &serverMap);
 
         /**
          * Add a route
@@ -76,17 +74,7 @@ namespace AwsMock::Controller {
          * @param authorization authorization string
          * @return module name
          */
-        std::string GetModule(const std::string &authorization);
-
-        /**
-         * Configuration
-         */
-        Core::Configuration &_configuration;
-
-        /**
-         * Metric module
-         */
-        Core::MetricService &_metricService;
+        static std::string GetModule(const std::string &authorization);
 
         /**
          * Server map

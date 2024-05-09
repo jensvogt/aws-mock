@@ -16,7 +16,7 @@
 namespace AwsMock::Service {
 
     /**
-     * Gateway request handler factory
+     * @brief Gateway request handler factory
      *
      * @author jens.vogt\@opitz-consulting.com
      */

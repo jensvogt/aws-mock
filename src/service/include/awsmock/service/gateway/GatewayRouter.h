@@ -29,7 +29,7 @@
 namespace AwsMock::Service {
 
     /**
-     * Gateway router
+     * @brief Gateway router
      *
      * @author jens.vogt\@opitz-consulting.com
      */
@@ -39,11 +39,8 @@ namespace AwsMock::Service {
 
         /**
          * Constructor
-         *
-         * @param configuration application configuration
-         * @param metricService common monitoring module
          */
-        GatewayRouter(Core::Configuration &configuration, Core::MetricService &metricService);
+        GatewayRouter();
 
         /**
          * Destructor

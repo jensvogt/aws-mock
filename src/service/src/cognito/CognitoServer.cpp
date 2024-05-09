@@ -7,7 +7,7 @@
 namespace AwsMock::Service {
 
     CognitoServer::CognitoServer(Core::Configuration &configuration)
-        : AbstractServer(configuration, "cognito", 10), _configuration(configuration), _module("cognito"), _moduleDatabase(Database::ModuleDatabase::instance()),
+        : AbstractServer("cognito", 10), _configuration(configuration), _module("cognito"), _moduleDatabase(Database::ModuleDatabase::instance()),
           _cognitoDatabase(Database::CognitoDatabase::instance()) {
 
         // Get HTTP configuration values

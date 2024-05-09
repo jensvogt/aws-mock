@@ -6,21 +6,22 @@
 
 namespace AwsMock::Service {
 
-    GatewayServer::GatewayServer(Core::Configuration &configuration, Core::MetricService &metricService) : AbstractServer(configuration, "gateway", 10), _configuration(configuration), _metricService(metricService), _running(false) {
+    GatewayServer::GatewayServer() : AbstractServer("gateway", 10) {
 
         // Get HTTP configuration values
-        _port = _configuration.getInt("awsmock.service.gateway.http.port", GATEWAY_DEFAULT_PORT);
-        _host = _configuration.getString("awsmock.service.gateway.http.host", GATEWAY_DEFAULT_HOST);
-        _maxQueueLength = _configuration.getInt("awsmock.service.gateway.http.max.queue", GATEWAY_MAX_QUEUE);
-        _maxThreads = _configuration.getInt("awsmock.service.gateway.http.max.threads", GATEWAY_MAX_THREADS);
-        _requestTimeout = _configuration.getInt("awsmock.service.gateway.http.timeout", GATEWAY_TIMEOUT);
+        Core::Configuration& configuration = Core::Configuration::instance();
+        _port = configuration.getInt("awsmock.service.gateway.http.port", GATEWAY_DEFAULT_PORT);
+        _host = configuration.getString("awsmock.service.gateway.http.host", GATEWAY_DEFAULT_HOST);
+        _maxQueueLength = configuration.getInt("awsmock.service.gateway.http.max.queue", GATEWAY_MAX_QUEUE);
+        _maxThreads = configuration.getInt("awsmock.service.gateway.http.max.threads", GATEWAY_MAX_THREADS);
+        _requestTimeout = configuration.getInt("awsmock.service.gateway.http.timeout", GATEWAY_TIMEOUT);
 
         // Sleeping period
-        _period = _configuration.getInt("awsmock.worker.lambda.period", 10000);
+        _period = configuration.getInt("awsmock.worker.lambda.period", 10000);
         log_debug << "Gateway worker period: " << _period;
 
         // Create environment
-        _region = _configuration.getString("awsmock.region");
+        _region = configuration.getString("awsmock.region");
         log_debug << "GatewayServer initialized";
     }
 
@@ -38,7 +39,7 @@ namespace AwsMock::Service {
         log_info << "Gateway server starting";
 
         // Start HTTP manager
-        StartHttpServer(_maxQueueLength, _maxThreads, _requestTimeout, _host, _port, new GatewayRouter(_configuration, _metricService));
+        StartHttpServer(_maxQueueLength, _maxThreads, _requestTimeout, _host, _port, new GatewayRouter());
     }
 
     void GatewayServer::Run() {

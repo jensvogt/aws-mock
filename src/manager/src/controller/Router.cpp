@@ -6,7 +6,7 @@
 
 namespace AwsMock::Controller {
 
-    Router::Router(Core::Configuration &configuration, Core::MetricService &metricService, Service::ServerMap &serverMap) : _configuration(configuration), _metricService(metricService), _serverMap(serverMap) {
+    Router::Router(Service::ServerMap &serverMap) : _serverMap(serverMap) {
 
         // Add routes
         AddRoute("module", "AwsMock::Resource::Factory::ModuleFactory");
@@ -44,7 +44,7 @@ namespace AwsMock::Controller {
             return new AwsMock::Core::ResourceNotFound();
         }
         log_debug << "Found request handler for route: " << route << " factory: " << factoryIndex->second;
-        return factory->createResource(_configuration, _metricService, _serverMap);
+        return factory->createResource(_serverMap);
     }
 
     void Router::AddRoute(const std::string &route, const std::string &factory) {

@@ -191,6 +191,10 @@ namespace AwsMock::Core {
         if (filename.empty()) {
             throw CoreException("Empty filename");
         }
+        if (!Core::FileUtils::FileExists(filename)) {
+            log_warning << "Configuration file '" << filename << "' does not exist, Will use defaults.";
+            return;
+        }
         _filename = filename;
         load(_filename);
     }
@@ -234,6 +238,13 @@ namespace AwsMock::Core {
     }
 
     void Configuration::WriteFile(const std::string &filename) {
+        if (filename.empty()) {
+            log_warning << "Configuration filename empty.";
+            return;
+        }
+        if (Core::FileUtils::FileExists(filename)) {
+            log_warning << "Configuration filename exists already. File will be truncated, before writing.";
+        }
         std::vector<std::string> pKeys;
         this->keys(pKeys);
         std::ofstream ofs(filename, std::ofstream::trunc);

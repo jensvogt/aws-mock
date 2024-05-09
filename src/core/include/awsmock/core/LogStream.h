@@ -12,7 +12,7 @@
 #include <string_view>
 
 // Plog includes
-#define PLOG_OMIT_LOG_DEFINES
+#include <plog/Appenders/RollingFileAppender.h>
 #include <plog/Formatters/TxtFormatter.h>
 #include <plog/Init.h>
 #include <plog/Initializers/ConsoleInitializer.h>
@@ -41,6 +41,20 @@ namespace AwsMock::Core {
          * @param severity PLog severity string
          */
         explicit LogStream(const std::string &severity);
+
+        /**
+         * Set log level
+         *
+         * @param severity PLog severity string
+         */
+        static void SetLevel(const std::string &severity);
+
+        /**
+         * Set log file
+         *
+         * @param filename name of the log file
+         */
+        static void SetLogfile(const std::string &filename);
     };
 
 }// namespace AwsMock::Core
