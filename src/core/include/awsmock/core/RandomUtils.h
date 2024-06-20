@@ -16,7 +16,7 @@
 namespace AwsMock::Core {
 
     /**
-     * Random utilities.
+     * @brief Random utilities.
      *
      * <p>Using the Mersenne Twister random generator with a uniform distribution.</p>
      *
@@ -27,7 +27,7 @@ namespace AwsMock::Core {
       public:
 
         /**
-         * Generates a random integer between min and max
+         * @brief Generates a random integer between min and max
          *
          * @param min minimum integer
          * @param max minimum integer
@@ -36,7 +36,7 @@ namespace AwsMock::Core {
         static int NextInt(int min, int max);
 
         /**
-         * Generates a random integer between min and max
+         * @brief Generates a random integer between min and max
          *
          * @param min minimum integer
          * @param max minimum integer
@@ -45,7 +45,7 @@ namespace AwsMock::Core {
         static unsigned int NextUInt(unsigned int min, unsigned int max);
 
         /**
-         * Generates a random integer array, with random numbers between min and max with the given size
+         * @brief Generates a random integer array, with random numbers between min and max with the given size
          *
          * @param size number of random numbers to generate
          * @param min minimum integer
@@ -55,7 +55,7 @@ namespace AwsMock::Core {
         static std::vector<int> IntArray(int size, int min, int max);
 
         /**
-         * Generates a double between min and max
+         * @brief Generates a double between min and max
          *
          * @param min minimum integer
          * @param max minimum integer
@@ -64,7 +64,7 @@ namespace AwsMock::Core {
         static double NextDouble(double min, double max);
 
         /**
-         * Generates a random double array, with random numbers between min and max with the given size
+         * @brief Generates a random double array, with random numbers between min and max with the given size
          *
          * @param size number of random numbers to generate
          * @param min minimum integer

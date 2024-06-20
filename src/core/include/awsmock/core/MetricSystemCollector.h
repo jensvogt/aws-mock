@@ -5,14 +5,14 @@
 #ifndef AWSMOCK_CORE_METRIC_SYSTEM_COLLECTOR_H
 #define AWSMOCK_CORE_METRIC_SYSTEM_COLLECTOR_H
 
+// C includes
+#include <sys/times.h>
+
 // C++ Standard includes
 #include <cassert>
 #include <fstream>
 #include <sstream>
 #include <string>
-#ifndef _WIN32
-#include <sys/times.h>
-#endif
 
 // Poco includes
 #include <Poco/Prometheus/Counter.h>
@@ -36,7 +36,11 @@
 namespace AwsMock::Core {
 
     /**
-     * Collect system information like CPU and Memory. Runs as background thread with a given timeout in ms.
+     * @brief Collect system information like CPU and Memory.
+     *
+     * @par
+     * Runs as background thread with a given timeout in ms. The value are taken from the /proc filesystem on
+     * Linux and WBEM on Windows.
      *
      * @author jens.vogt\@opitz-consulting.com
      */
@@ -45,34 +49,34 @@ namespace AwsMock::Core {
       public:
 
         /**
-         * Constructor.
+         * @brief Constructor.
          */
         explicit MetricSystemCollector();
 
         /**
-         * Destructor.
+         * @brief Destructor.
          */
         ~MetricSystemCollector();
 
         /**
-         * Initialization
+         * @brief Initialization
          */
         void Initialize() override;
 
         /**
-         * Runnable method
+         * @brief Runnable method
          */
         void Run() override;
 
         /**
-         * Shutdown
+         * @brief Shutdown
          */
         void Shutdown() override;
 
       private:
 
         /**
-         * Updates the system counter
+         * @brief Updates the system counter
          */
         void CollectSystemCounter();
 

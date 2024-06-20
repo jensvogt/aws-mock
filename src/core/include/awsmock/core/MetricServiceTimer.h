@@ -11,20 +11,25 @@
 
 namespace AwsMock::Core {
 
+    /**
+     * @brief Measure a methods execution time.
+     *
+     * The timer is stopped by the destructor, which is called when the method is left.
+     *
+     * @author jens.vogt\@opitz-consulting.com
+     *
+     * @tparam M
+     */
     template<class M>
     class MetricServiceTimer {
 
       public:
 
         /**
-         * Constructor
-         *
-         * <p>Measure a methods execution time.</p>
+         * @brief Constructor
          *
          * @param metricService metric module
          * @param name name of the underlying timer
-         *
-         * @author jens.vogt\@opitz-consulting.com
          */
         explicit MetricServiceTimer(M &metricService, std::string name) : _metricService(metricService), _name(std::move(name)) {
             if (!_metricService.TimerExists(_name)) {
@@ -34,24 +39,24 @@ namespace AwsMock::Core {
         }
 
         /**
-         * Destructor
+         * @brief Destructor
          */
         ~MetricServiceTimer() {
             _metricService.StopTimer(_name);
         }
 
         /**
-         * Default constructor
+         * @brief Default constructor
          */
         MetricServiceTimer() = delete;
 
         /**
-         * Copy constructor
+         * @brief Copy constructor
          */
         MetricServiceTimer(const MetricServiceTimer &) = delete;
 
         /**
-         * Equals operator
+         * @brief Equals operator
          */
         MetricServiceTimer &operator=(const MetricServiceTimer &) = delete;
 
@@ -70,4 +75,4 @@ namespace AwsMock::Core {
 
 }// namespace AwsMock::Core
 
-#endif//AWSMOCK_CORE_METRIC_SERVICE_TIMER_H
+#endif// AWSMOCK_CORE_METRIC_SERVICE_TIMER_H

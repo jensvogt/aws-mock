@@ -40,8 +40,10 @@ namespace AwsMock::Core {
     typedef std::map<std::string, std::chrono::time_point<std::chrono::high_resolution_clock>> TimerStartMap;
 
     /**
-     * Maintains a list of counter and gauges for monitoring via Prometheus. The data is made available via a HTTP
-     * manager listening on port 9100. The port ist configurable.
+     * @brief Maintains a list of counter and gauges for monitoring via Prometheus.
+     *
+     * The data is made available via a HTTP manager listening on port 9100. The port ist configurable in the
+     * awsmock properties file.
      *
      * @author jens.vogt\@opitz-consulting.com
      */
@@ -50,12 +52,12 @@ namespace AwsMock::Core {
       public:
 
         /**
-         * Default constructor
+         * @brief Default constructor
          */
         MetricService();
 
         /**
-         * Singleton instance
+         * @brief Singleton instance
          */
         static MetricService &instance() {
             static Poco::SingletonHolder<MetricService> sh;
@@ -63,34 +65,34 @@ namespace AwsMock::Core {
         }
 
         /**
-         * Destructor
+         * @brief Destructor
          */
         virtual ~MetricService() = default;
 
         /**
-         * Initialization
+         * @brief Initialization
          */
         void Initialize() override;
 
         /**
-         * Run main loop
+         * @brief Run main loop
          */
         void Run() override;
 
         /**
-         * Gracefully shutdown
+         * @brief Gracefully shutdown
          */
         void Shutdown() override;
 
         /**
-         * Adds a counter to the map.
+         * @brief Adds a counter to the map.
          *
          * @param name name of the counter
          */
         void AddCounter(const std::string &name);
 
         /**
-         * Adds a counter to the map.
+         * @brief Adds a counter to the map.
          *
          * @param name name of the counter
          * @param label label name of the counter
@@ -98,7 +100,7 @@ namespace AwsMock::Core {
         void AddCounter(const std::string &name, const std::string &label);
 
         /**
-         * Check whether a counter exists
+         * @brief Check whether a counter exists
          *
          * @param name name of the counter.
          * @return true if counter exists.
@@ -106,7 +108,7 @@ namespace AwsMock::Core {
         bool CounterExists(const std::string &name);
 
         /**
-         * Check whether a counter exists
+         * @brief Check whether a counter exists
          *
          * @param name name of the counter.
          * @param label label name of the counter
@@ -115,7 +117,7 @@ namespace AwsMock::Core {
         bool CounterExists(const std::string &name, const std::string &label);
 
         /**
-         * Increments a counter.
+         * @brief Increments a counter.
          *
          * @param name of the counter
          * @param value value for the incrementation (default: 1), can be negative
@@ -123,7 +125,7 @@ namespace AwsMock::Core {
         void IncrementCounter(const std::string &name, int value = 1);
 
         /**
-         * Increments a labeled counter.
+         * @brief Increments a labeled counter.
          *
          * @param name of the counter
          * @param labelName name of the label
@@ -133,7 +135,7 @@ namespace AwsMock::Core {
         void IncrementCounter(const std::string &name, const std::string &labelName, const std::string &labelValue, int value = 1);
 
         /**
-         * Decrements a counter.
+         * @brief Decrements a counter.
          *
          * @param name of the counter
          * @param value value for the incrementation (default: 1), can be negative
@@ -141,7 +143,7 @@ namespace AwsMock::Core {
         void DecrementCounter(const std::string &name, int value = 1);
 
         /**
-         * Decrements a labeled counter.
+         * @brief Decrements a labeled counter.
          *
          * @param name of the counter
          * @param labelName name of the label
@@ -151,21 +153,21 @@ namespace AwsMock::Core {
         void DecrementCounter(const std::string &name, const std::string &labelName, const std::string &labelValue, int value = 1);
 
         /**
-         * Clears a counter.
+         * @brief Clears a counter.
          *
          * @param name of the counter
          */
         void ClearCounter(const std::string &name);
 
         /**
-         * Adds a gauge to the map.
+         * @brief Adds a gauge to the map.
          *
          * @param name name of the gauge
          */
         void AddGauge(const std::string &name);
 
         /**
-         * Adds a gauge to the map.
+         * @brief Adds a gauge to the map.
          *
          * @param name name of the gauge
          * @param label label of the gauge
@@ -173,7 +175,7 @@ namespace AwsMock::Core {
         void AddGauge(const std::string &name, const std::string &label);
 
         /**
-         * Check whether a gauge exists
+         * @brief Check whether a gauge exists
          *
          * @param name name of the gauge.
          * @return true if gauge exists.
@@ -181,7 +183,7 @@ namespace AwsMock::Core {
         bool GaugeExists(const std::string &name);
 
         /**
-         * Check whether a gauge exists
+         * @brief Check whether a gauge exists
          *
          * @param name name of the gauge.
          * @param label label of the gauge.
@@ -190,7 +192,7 @@ namespace AwsMock::Core {
         bool GaugeExists(const std::string &name, const std::string &label);
 
         /**
-         * Sets a integer gauge value in the map.
+         * @brief Sets a integer gauge value in the map.
          *
          * @param name name of the gauge
          * @param value value of the gauge
@@ -198,7 +200,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, int value);
 
         /**
-         * Sets a integer gauge value in the map.
+         * @brief Sets a integer gauge value in the map.
          *
          * @param name name of the gauge
          * @param labelName label name of the gauge
@@ -208,7 +210,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, const std::string &labelName, const std::string &labelValue, int value);
 
         /**
-         * Sets a long integer gauge value in the map.
+         * @brief Sets a long integer gauge value in the map.
          *
          * @param name name of the gauge
          * @param value value of the gauge
@@ -216,7 +218,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, long value);
 
         /**
-         * Sets a long integer gauge value in the map.
+         * @brief Sets a long integer gauge value in the map.
          *
          * @param name name of the gauge
          * @param labelName label name of the gauge
@@ -226,7 +228,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, const std::string &labelName, const std::string &labelValue, long value);
 
         /**
-         * Sets a unsigned long integer gauge value in the map.
+         * @brief Sets a unsigned long integer gauge value in the map.
          *
          * @param name name of the gauge
          * @param value value of the gauge
@@ -234,7 +236,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, unsigned long value);
 
         /**
-         * Sets a unsigned long integer gauge value in the map.
+         * @brief Sets a unsigned long integer gauge value in the map.
          *
          * @param name name of the gauge
          * @param labelName label name of the gauge
@@ -244,7 +246,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, const std::string &labelName, const std::string &labelValue, unsigned long value);
 
         /**
-         * Sets a float gauge value in the map.
+         * @brief Sets a float gauge value in the map.
          *
          * @param name name of the gauge
          * @param value value of the gauge
@@ -252,7 +254,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, float value);
 
         /**
-         * Sets a float gauge value in the map.
+         * @brief Sets a float gauge value in the map.
          *
          * @param name name of the gauge
          * @param labelName label name of the gauge
@@ -262,7 +264,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, const std::string &labelName, const std::string &labelValue, float value);
 
         /**
-         * Sets a double gauge value in the map.
+         * @brief Sets a double gauge value in the map.
          *
          * @param name name of the gauge
          * @param value value of the gauge
@@ -270,7 +272,7 @@ namespace AwsMock::Core {
         [[maybe_unused]] void SetGauge(const std::string &name, double value);
 
         /**
-         * Sets a double gauge value in the map.
+         * @brief Sets a double gauge value in the map.
          *
          * @param name name of the gauge
          * @param labelName label name of the gauge
@@ -280,7 +282,7 @@ namespace AwsMock::Core {
         void SetGauge(const std::string &name, const std::string &labelName, const std::string &labelValue, double value);
 
         /**
-         * Increments a gauge.
+         * @brief Increments a gauge.
          *
          * @param name of the gauge
          * @param value value for the incrementation (default: 1), can be negative
@@ -288,7 +290,7 @@ namespace AwsMock::Core {
         void IncrementGauge(const std::string &name, int value = 1);
 
         /**
-         * Increments a gauge.
+         * @brief Increments a gauge.
          *
          * @param name of the gauge
          * @param labelName label name of the gauge
@@ -298,14 +300,14 @@ namespace AwsMock::Core {
         void IncrementGauge(const std::string &name, const std::string &labelName, const std::string &labelValue, int value = 1);
 
         /**
-         * Adds a histogram to the map.
+         * @brief Adds a histogram to the map.
          *
          * @param name name of the histogram
          */
         void AddHistogram(const std::string &name);
 
         /**
-         * Adds a histogram to the map.
+         *@brief  Adds a histogram to the map.
          *
          * @param name name of the histogram
          * @param label label of the histogram
@@ -313,7 +315,7 @@ namespace AwsMock::Core {
         void AddHistogram(const std::string &name, const std::string &label);
 
         /**
-         * Check whether a histogram exists
+         * @brief Check whether a histogram exists
          *
          * @param name name of the histogram.
          * @return true if histogram exists.
@@ -321,7 +323,7 @@ namespace AwsMock::Core {
         bool HistogramExists(const std::string &name);
 
         /**
-         * Check whether a histogram exists
+         * @brief Check whether a histogram exists
          *
          * @param name name of the histogram.
          * @param label label of the histogram.
@@ -330,40 +332,40 @@ namespace AwsMock::Core {
         bool HistogramExists(const std::string &name, const std::string &label);
 
         /**
-         * Add timer
+         * @brief Add timer
          */
         void AddTimer(const std::string &name);
 
         /**
-         * Starts a timer
+         * @brief Starts a timer
          *
          * @param name name of the timer.
          */
         void StartTimer(const std::string &name);
 
         /**
-         * Stop and fill in the duration of a timer
+         * @brief Stop and fill in the duration of a timer
          *
          * @param name name of the timer.
          */
         void StopTimer(const std::string &name);
 
         /**
-         * Resets a timers.
+         * @brief Resets a timers.
          *
          * @param name name of the timer.
          */
         [[maybe_unused]] void ResetTimer(const std::string &name);
 
         /**
-         * Resets all timers.
+         * @brief Resets all timers.
          *
          * @param name name of the timer.
          */
         [[maybe_unused]] void ResetAllTimer();
 
         /**
-         * Check whether a timer exists
+         * @brief Check whether a timer exists
          *
          * @param name name of the timer.
          * @return true if timer exists.
@@ -373,7 +375,7 @@ namespace AwsMock::Core {
       private:
 
         /**
-         * Returns a thread safe timer key string.
+         * @brief Returns a thread safe timer key string.
          *
          * @param name name of the timer.
          */
